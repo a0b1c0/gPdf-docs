@@ -1,0 +1,476 @@
+{
+  "settings": {
+    "defaults": {
+      "text": {
+        "font_family": "",
+        "font_size": 10
+      }
+    }
+  },
+  "pages": [
+    {
+      "width": 100,
+      "height": 150,
+      "elements": [
+        {
+          "type": "text",
+          "x": 5,
+          "y": 16,
+          "z_index": 0,
+          "frame": {
+            "height": 2.5,
+            "width": 18.7,
+            "overflow": "clip"
+          },
+          "defaults": {
+            "run": {
+              "font_size": 5,
+              "font_weight": "bold"
+            }
+          },
+          "content": {
+            "blocks": [
+              {
+                "inlines": [
+                  {
+                    "text": "DELIVER TO:",
+                    "type": "text"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ]
+          }
+        },
+        {
+          "type": "text",
+          "x": 5,
+          "y": 18,
+          "z_index": 0,
+          "comment": "收件人信息",
+          "frame": {
+            "height": 23.5,
+            "width": 70.6,
+            "overflow": "clip"
+          },
+          "defaults": {
+            "run": {
+              "font_size": 11
+            }
+          },
+          "content": {
+            "blocks": [
+              {
+                "inlines": [
+                  {
+                    "text": "Acme Corp - GLOBAL HEADER HEADER  vs bearer_thickness BillMatrix ",
+                    "type": "text"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ]
+          }
+        },
+        {
+          "type": "text",
+          "x": 5,
+          "y": 45,
+          "z_index": 0,
+          "frame": {
+            "width": 69.8
+          },
+          "defaults": {
+            "run": {
+              "font_size": 5,
+              "font_weight": "bold"
+            }
+          },
+          "content": {
+            "blocks": [
+              {
+                "inlines": [
+                  {
+                    "text": "RECIPIENT:",
+                    "type": "text"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ]
+          }
+        },
+        {
+          "type": "text",
+          "x": 5,
+          "y": 47,
+          "z_index": 0,
+          "frame": {
+            "width": 69.8
+          },
+          "defaults": {
+            "run": {
+              "font_size": 8,
+              "font_weight": "bold"
+            }
+          },
+          "content": {
+            "blocks": [
+              {
+                "inlines": [
+                  {
+                    "text": "company 1766115497610 ",
+                    "type": "text"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ]
+          }
+        },
+        {
+          "type": "text",
+          "x": 5,
+          "y": 52,
+          "z_index": 0,
+          "frame": {
+            "width": 69.8
+          },
+          "defaults": {
+            "run": {
+              "font_size": 9,
+              "font_weight": "bold"
+            }
+          },
+          "content": {
+            "blocks": [
+              {
+                "inlines": [
+                  {
+                    "text": "1766105497613 1766115497613",
+                    "type": "text"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ]
+          }
+        },
+        {
+          "type": "text",
+          "x": 5,
+          "y": 130,
+          "z_index": 0,
+          "frame": {
+            "height": 2.5,
+            "width": 11.6,
+            "overflow": "clip"
+          },
+          "defaults": {
+            "run": {
+              "font_size": 5,
+              "font_weight": "bold"
+            }
+          },
+          "content": {
+            "blocks": [
+              {
+                "inlines": [
+                  {
+                    "text": "FROM:",
+                    "type": "text"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ]
+          }
+        },
+        {
+          "type": "text",
+          "x": 5,
+          "y": 133,
+          "z_index": 0,
+          "frame": {
+            "height": 11.4,
+            "width": 60.3,
+            "overflow": "clip"
+          },
+          "defaults": {
+            "run": {
+              "font_size": 7,
+              "font_weight": "bold"
+            }
+          },
+          "content": {
+            "blocks": [
+              {
+                "inlines": [
+                  {
+                    "text": "Removed get_ttf_face (which returned an unsafe  ",
+                    "type": "text"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ]
+          }
+        },
+        {
+          "type": "text",
+          "x": 5,
+          "y": 60.5,
+          "z_index": 0,
+          "frame": {
+            "height": 2.5,
+            "width": 28.7,
+            "overflow": "clip"
+          },
+          "defaults": {
+            "run": {
+              "font_size": 5,
+              "font_weight": "bold"
+            }
+          },
+          "content": {
+            "blocks": [
+              {
+                "inlines": [
+                  {
+                    "text": "SPECIAL REQUIREMENTS:",
+                    "type": "text"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ]
+          }
+        },
+        {
+          "type": "text",
+          "x": 59.2,
+          "y": 62.2,
+          "z_index": 0,
+          "frame": {
+            "height": 6.1,
+            "width": 35.8,
+            "overflow": "clip"
+          },
+          "defaults": {
+            "paragraph": {
+              "align": "right"
+            },
+            "run": {
+              "background": {
+                "color": "#121211"
+              },
+              "color": "#faf4f4",
+              "font_size": 14
+            }
+          },
+          "content": {
+            "blocks": [
+              {
+                "inlines": [
+                  {
+                    "text": "PDNTEST-XXX0",
+                    "type": "text"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ]
+          }
+        },
+        {
+          "type": "text",
+          "x": 74.7,
+          "y": 48.8,
+          "z_index": 0,
+          "frame": {
+            "height": 6.2,
+            "width": 20.3,
+            "overflow": "clip"
+          },
+          "defaults": {
+            "paragraph": {
+              "align": "justify"
+            },
+            "run": {
+              "font_size": 12,
+              "font_weight": "bold"
+            }
+          },
+          "content": {
+            "blocks": [
+              {
+                "inlines": [
+                  {
+                    "text": "7.500kg",
+                    "type": "text"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ]
+          }
+        },
+        {
+          "type": "text",
+          "x": 82.2,
+          "y": 79,
+          "z_index": 0,
+          "frame": {
+            "height": 6.7,
+            "width": 12.8,
+            "overflow": "clip"
+          },
+          "defaults": {
+            "paragraph": {
+              "align": "center"
+            },
+            "run": {
+              "color": "#000000",
+              "font_size": 10,
+              "font_weight": "bold"
+            }
+          },
+          "content": {
+            "blocks": [
+              {
+                "inlines": [
+                  {
+                    "text": "1/2",
+                    "type": "text"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ]
+          }
+        },
+        {
+          "type": "line",
+          "x1": 5,
+          "y1": 129.75,
+          "x2": 95,
+          "y2": 129.75,
+          "z_index": 0
+        },
+        {
+          "type": "line",
+          "x1": 5,
+          "y1": 99,
+          "x2": 95,
+          "y2": 99,
+          "z_index": 0
+        },
+        {
+          "type": "line",
+          "x1": 5,
+          "y1": 71,
+          "x2": 95,
+          "y2": 71,
+          "z_index": 0
+        },
+        {
+          "type": "line",
+          "x1": 5,
+          "y1": 60,
+          "x2": 95,
+          "y2": 60,
+          "z_index": 0
+        },
+        {
+          "type": "line",
+          "x1": 5,
+          "y1": 44.5,
+          "x2": 95,
+          "y2": 44.5,
+          "z_index": 0
+        },
+        {
+          "type": "line",
+          "x1": 5,
+          "y1": 15.75,
+          "x2": 95,
+          "y2": 15.75,
+          "z_index": 0
+        },
+        {
+          "type": "text",
+          "x": 5,
+          "y": 6,
+          "frame": {
+            "height": 7.5,
+            "vertical_align": "bottom",
+            "width": 21.8,
+            "overflow": "clip"
+          },
+          "defaults": {
+            "run": {
+              "font_family": "Mansalva-Regular",
+              "font_size": 20
+            }
+          },
+          "content": {
+            "blocks": [
+              {
+                "inlines": [
+                  {
+                    "text": "xSend",
+                    "type": "text"
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ]
+          }
+        },
+        {
+          "type": "barcode",
+          "x": 19,
+          "y": 75,
+          "z_index": 0,
+          "width": 55,
+          "height": 15,
+          "format": "code128",
+          "content": "PDN0003507278",
+          "barcode_text": {
+            "content": "",
+            "enabled": true,
+            "position": "bottom"
+          }
+        },
+        {
+          "type": "barcode",
+          "x": 83,
+          "y": 131.9,
+          "z_index": 0,
+          "width": 12,
+          "height": 12,
+          "format": "datamatrix",
+          "content": "PDN000123456789",
+          "barcode_text": {
+            "enabled": false,
+            "position": "bottom"
+          }
+        },
+        {
+          "type": "barcode",
+          "x": 78,
+          "y": 18,
+          "z_index": 0,
+          "width": 17,
+          "height": 16,
+          "format": "qr",
+          "content": "PDN000123456789",
+          "barcode_text": {
+            "enabled": false,
+            "position": "bottom"
+          }
+        }
+      ]
+    }
+  ]
+}

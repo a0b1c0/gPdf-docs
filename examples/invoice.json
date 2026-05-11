@@ -1,0 +1,651 @@
+{
+    "settings": {
+        "profile": "",
+        "defaults": {
+            "text": {
+                "font_family": "NotoSans-Regular",
+                "font_size": 7.5,
+                "color": "#111827"
+            }
+        }
+    },
+    "layers": {
+        "background": {
+            "elements": [
+                {
+                    "type": "rect",
+                    "x": 0,
+                    "y": 0,
+                    "width": 215.9,
+                    "height": 279.4,
+                    "fill": {
+                        "color": "#FFFBEB"
+                    }
+                }
+            ]
+        },
+        "watermark": {
+            "opacity": 0.12,
+            "template": {
+                "type": "text",
+                "content": "PRIVATE COPY"
+            },
+            "style": {
+                "font_family": "",
+                "font_size": 10.5,
+                "font_weight": "bold",
+                "color": "#B91C1C",
+                "width": 56,
+                "text_align": "center"
+            },
+            "layout": {
+                "preset": "diagonal_tile",
+                "angle": 330,
+                "gap_x": 18,
+                "gap_y": 16,
+                "offset_x": 8,
+                "offset_y": 10,
+                "stagger_x": 34
+            }
+        },
+        "stamp": {
+            "repeat": "last_page",
+            "elements": [
+                {
+                    "type": "circle",
+                    "cx": 171,
+                    "cy": 228,
+                    "r": 18,
+                    "fill": {
+                        "color": "#FEF2F2",
+                        "opacity": 0.5
+                    },
+                    "stroke": {
+                        "color": "#B91C1C",
+                        "width": 0.9,
+                        "opacity": 0.9
+                    }
+                },
+                {
+                    "type": "circle",
+                    "cx": 171,
+                    "cy": 228,
+                    "r": 14.6,
+                    "stroke": {
+                        "color": "#B91C1C",
+                        "width": 0.45,
+                        "opacity": 0.8,
+                        "dash": {
+                            "preset": "dotted"
+                        }
+                    }
+                },
+                {
+                    "type": "text",
+                    "x": 152,
+                    "y": 220,
+                    "content": "PAID",
+                    "style": {
+                        "font_size": 12,
+                        "font_weight": "bold",
+                        "color": "#B91C1C",
+                        "width": 38,
+                        "text_align": "center"
+                    }
+                },
+                {
+                    "type": "line",
+                    "x1": 156,
+                    "y1": 231,
+                    "x2": 186,
+                    "y2": 231,
+                    "stroke": {
+                        "color": "#B91C1C",
+                        "width": 0.45,
+                        "opacity": 0.8
+                    }
+                },
+                {
+                    "type": "text",
+                    "x": 152,
+                    "y": 233,
+                    "content": "2026-03-13",
+                    "style": {
+                        "font_size": 5.5,
+                        "color": "#B91C1C",
+                        "width": 38,
+                        "text_align": "center"
+                    }
+                }
+            ]
+        }
+    },
+    "footer": {
+        "height": 12,
+        "elements": [
+            {
+                "type": "line",
+                "x1": 18,
+                "y1": 0,
+                "x2": 198,
+                "y2": 0,
+                "stroke": {
+                    "color": "#E5E7EB",
+                    "width": 0.35
+                }
+            },
+            {
+                "type": "text",
+                "x": 18,
+                "y": 4,
+                "content": "Style 19 / Premium gold ",
+                "style": {
+                    "font_size": 6.5,
+                    "color": "#6B7280"
+                }
+            },
+            {
+                "type": "text",
+                "x": 160,
+                "y": 4,
+                "content": "Page {page} / {total_pages}",
+                "style": {
+                    "font_size": 6.5,
+                    "color": "#6B7280",
+                    "width": 38,
+                    "text_align": "right"
+                }
+            }
+        ]
+    },
+    "pages": [
+        {
+            "width": 215.9,
+            "height": 279.4,
+            "elements": [
+                {
+                    "type": "text",
+                    "x": 18,
+                    "y": 18,
+                    "content": {
+                        "spans": [
+                            {
+                                "text": "Private Client ",
+                                "style": {
+                                    "font_weight": "bold",
+                                    "color": "#78350F"
+                                }
+                            },
+                            {
+                                "text": "Statement ",
+                                "style": {
+                                    "font_weight": "bold",
+                                    "color": "#B45309"
+                                }
+                            },
+                            {
+                                "text": "test "
+                            }
+                        ]
+                    },
+                    "style": {
+                        "font_size": 18,
+                        "color": "#78350F"
+                    }
+                },
+                {
+                    "type": "text",
+                    "x": 18,
+                    "y": 27,
+                    "content": {
+                        "spans": [
+                            {
+                                "text": "Premium service account"
+                            },
+                            {
+                                "text": "\nGold accent preview",
+                                "style": {
+                                    "font_weight": "bold",
+                                    "color": "#A16207"
+                                }
+                            }
+                        ]
+                    },
+                    "style": {
+                        "font_size": 7.2,
+                        "color": "#A16207",
+                        "line_height": 1.2
+                    }
+                },
+                {
+                    "type": "barcode",
+                    "format": "qr",
+                    "content": "https://gpdf.com",
+                    "x": 180,
+                    "y": 10,
+                    "width": 15,
+                    "height": 15,
+                    "style": {
+                        "color": "#A16207"
+                    }
+                },
+                {
+                    "type": "line",
+                    "x1": 18,
+                    "y1": 35,
+                    "x2": 198,
+                    "y2": 35,
+                    "stroke": {
+                        "color": "#D4A017",
+                        "width": 0.35
+                    }
+                },
+                {
+                    "type": "stack",
+                    "gap": 20,
+                    "children": [
+                        {
+                            "type": "table",
+                            "x": 18,
+                            "y": 42,
+                            "width": 180,
+                            "columns": [
+                                {
+                                    "key": "seq",
+                                    "header": "No.",
+                                    "width": {
+                                        "mode": "fixed",
+                                        "value": 12
+                                    },
+                                    "cell": {
+                                        "text": {
+                                            "text_align": "right"
+                                        }
+                                    },
+                                    "header_cell": {
+                                        "text": {
+                                            "text_align": "right"
+                                        }
+                                    }
+                                },
+                                {
+                                    "key": "description",
+                                    "header": "Description",
+                                    "width": {
+                                        "mode": "fixed",
+                                        "value": 92
+                                    }
+                                },
+                                {
+                                    "key": "qty",
+                                    "header": "Qty",
+                                    "width": {
+                                        "mode": "fixed",
+                                        "value": 12
+                                    },
+                                    "cell": {
+                                        "text": {
+                                            "text_align": "right"
+                                        }
+                                    },
+                                    "header_cell": {
+                                        "text": {
+                                            "text_align": "right"
+                                        }
+                                    }
+                                },
+                                {
+                                    "key": "unit_price",
+                                    "header": "Unit",
+                                    "width": {
+                                        "mode": "fixed",
+                                        "value": 28
+                                    },
+                                    "cell": {
+                                        "text": {
+                                            "text_align": "right"
+                                        }
+                                    },
+                                    "header_cell": {
+                                        "text": {
+                                            "text_align": "right"
+                                        }
+                                    }
+                                },
+                                {
+                                    "key": "amount",
+                                    "header": "Amount",
+                                    "width": {
+                                        "mode": "fixed",
+                                        "value": 36
+                                    },
+                                    "cell": {
+                                        "text": {
+                                            "text_align": "right"
+                                        }
+                                    },
+                                    "header_cell": {
+                                        "text": {
+                                            "text_align": "right"
+                                        }
+                                    }
+                                }
+                            ],
+                            "rows": [
+                                {
+                                    "seq": 1,
+                                    "description": "Cloud compute runtime - production cluster usage for customer workloads",
+                                    "qty": 1,
+                                    "unit_price": "$480.00",
+                                    "amount": "$480.00"
+                                },
+                                {
+                                    "seq": 2,
+                                    "description": "Replica storage - us-west high availability replica footprint",
+                                    "qty": 1,
+                                    "unit_price": "$214.50",
+                                    "amount": "$214.50"
+                                },
+                                {
+                                    "seq": 3,
+                                    "description": "BI dashboard cache refresh - scheduled warmup jobs for analytics",
+                                    "qty": 1,
+                                    "unit_price": "$126.80",
+                                    "amount": "$126.80"
+                                },
+                                {
+                                    "seq": 4,
+                                    "description": "Backup retention extension - additional 21 daily snapshots",
+                                    "qty": 1,
+                                    "unit_price": "$188.35",
+                                    "amount": "$188.35"
+                                },
+                                {
+                                    "seq": 5,
+                                    "description": "Cross-region bandwidth - replication between disaster recovery regions",
+                                    "qty": 1,
+                                    "unit_price": "$90.00",
+                                    "amount": "$90.00"
+                                },
+                                {
+                                    "seq": 6,
+                                    "description": "Support response window - enhanced support coverage for incidents",
+                                    "qty": 1,
+                                    "unit_price": "$72.00",
+                                    "amount": "$72.00"
+                                },
+                                {
+                                    "seq": 7,
+                                    "description": "Usage insights export - finance reconciliation CSV and parquet export",
+                                    "qty": 1,
+                                    "unit_price": "$64.20",
+                                    "amount": "$64.20"
+                                },
+                                {
+                                    "seq": 8,
+                                    "description": "Managed secrets rotation - monthly credential rollover for critical integrations",
+                                    "qty": 1,
+                                    "unit_price": "$156.40",
+                                    "amount": "$156.40"
+                                },
+                                {
+                                    "seq": 9,
+                                    "description": "Query acceleration cache - warmup capacity reserved for BI dashboards",
+                                    "qty": 1,
+                                    "unit_price": "$98.75",
+                                    "amount": "$98.75"
+                                },
+                                {
+                                    "seq": 10,
+                                    "description": "Private link endpoint usage - secured partner VPC connectivity in production",
+                                    "qty": 1,
+                                    "unit_price": "$245.00",
+                                    "amount": "$245.00"
+                                },
+                                {
+                                    "seq": 11,
+                                    "description": "Audit log streaming - export pipeline for compliance and retention workflows",
+                                    "qty": 1,
+                                    "unit_price": "$67.30",
+                                    "amount": "$67.30"
+                                },
+                                {
+                                    "seq": 12,
+                                    "description": "Cross-account data share - governed analytics sharing to finance workspace",
+                                    "qty": 1,
+                                    "unit_price": "$184.90",
+                                    "amount": "$184.90"
+                                },
+                                {
+                                    "seq": 13,
+                                    "description": "Read replica runtime - 24x7 serving capacity reserved for reporting workloads",
+                                    "qty": 1,
+                                    "unit_price": "$112.60",
+                                    "amount": "$112.60"
+                                },
+                                {
+                                    "seq": 14,
+                                    "description": "Schema migration window - staged release coordination for controlled cutovers",
+                                    "qty": 1,
+                                    "unit_price": "$73.25",
+                                    "amount": "$73.25"
+                                },
+                                {
+                                    "seq": 15,
+                                    "description": "On-call incident bridge - premium incident collaboration channel reservation",
+                                    "qty": 1,
+                                    "unit_price": "$129.80",
+                                    "amount": "$129.80"
+                                },
+                                {
+                                    "seq": 16,
+                                    "description": "Regional failover rehearsal - monthly disaster recovery verification run",
+                                    "qty": 1,
+                                    "unit_price": "$54.00",
+                                    "amount": "$54.00"
+                                },
+                                {
+                                    "seq": 17,
+                                    "description": "Dedicated observability export - ingestion of platform metrics into finance lakehouse",
+                                    "qty": 1,
+                                    "unit_price": "$210.45",
+                                    "amount": "$210.45"
+                                },
+                                {
+                                    "seq": 18,
+                                    "description": "Usage API requests - invoicing and reconciliation endpoint calls above included tier",
+                                    "qty": 1,
+                                    "unit_price": "$88.10",
+                                    "amount": "$88.10"
+                                },
+                                {
+                                    "seq": 19,
+                                    "description": "Cold storage recovery tests - periodic restore validation for archive snapshots",
+                                    "qty": 1,
+                                    "unit_price": "$143.70",
+                                    "amount": "$143.70"
+                                },
+                                {
+                                    "seq": 20,
+                                    "description": "High-volume export jobs - month-end finance reporting batch generation",
+                                    "qty": 1,
+                                    "unit_price": "$96.55",
+                                    "amount": "$96.55"
+                                },
+                                {
+                                    "seq": 21,
+                                    "description": "Premium support manager - scheduled advisory sessions and change planning",
+                                    "qty": 1,
+                                    "unit_price": "$177.20",
+                                    "amount": "$177.20"
+                                },
+                                {
+                                    "seq": 22,
+                                    "description": "Long-term retention surcharge - extended archival storage beyond standard policy",
+                                    "qty": 1,
+                                    "unit_price": "$121.35",
+                                    "amount": "$121.35"
+                                }
+                            ],
+                            "header": {
+                                "show": true,
+                                "repeat_on_page_break": true,
+                                "cell": {
+                                    "fill": {
+                                        "color": "#FEF3C7"
+                                    },
+                                    "text": {
+                                        "font_weight": "bold",
+                                        "font_size": 7,
+                                        "color": "#78350F"
+                                    }
+                                }
+                            },
+                            "cell": {
+                                "padding": {
+                                    "x": 1.3,
+                                    "y": 2.6
+                                },
+                                "text": {
+                                    "font_size": 7,
+                                    "color": "#3F3F46"
+                                }
+                            },
+                            "body": {
+                                "alternate_fill": {
+                                    "color": "#FFFDF5"
+                                }
+                            },
+                            "grid": {
+                                "top": {
+                                    "color": "#D4A017",
+                                    "width": 0.2
+                                },
+                                "right": {
+                                    "color": "#D4A017",
+                                    "width": 0.2
+                                },
+                                "bottom": {
+                                    "color": "#D4A017",
+                                    "width": 0.2
+                                },
+                                "left": {
+                                    "color": "#D4A017",
+                                    "width": 0.2
+                                },
+                                "horizontal": {
+                                    "color": "#FCD34D",
+                                    "width": 0.2
+                                }
+                            }
+                        },
+                        {
+                            "type": "block",
+                            "elements": [
+                                {
+                                    "type": "text",
+                                    "x": 118,
+                                    "y": 0,
+                                    "content": "Subtotal",
+                                    "style": {
+                                        "font_size": 8,
+                                        "color": "#78350F"
+                                    }
+                                },
+                                {
+                                    "type": "text",
+                                    "x_anchor": {
+                                        "reference": "table_right",
+                                        "offset": 1
+                                    },
+                                    "y": 0,
+                                    "content": "$3,195.20",
+                                    "style": {
+                                        "font_size": 8,
+                                        "color": "#3F3F46",
+                                        "width": 24,
+                                        "text_align": "right"
+                                    }
+                                },
+                                {
+                                    "type": "line",
+                                    "x1": 118,
+                                    "y1": 5,
+                                    "x2": 196,
+                                    "y2": 5,
+                                    "stroke": {
+                                        "color": "#FCD34D",
+                                        "width": 0.35
+                                    }
+                                },
+                                {
+                                    "type": "text",
+                                    "x": 118,
+                                    "y": 8,
+                                    "content": "Tax",
+                                    "style": {
+                                        "font_size": 8,
+                                        "color": "#78350F"
+                                    }
+                                },
+                                {
+                                    "type": "text",
+                                    "x_anchor": {
+                                        "reference": "table_right",
+                                        "offset": 1
+                                    },
+                                    "y": 8,
+                                    "content": "$255.62",
+                                    "style": {
+                                        "font_size": 8,
+                                        "color": "#3F3F46",
+                                        "width": 24,
+                                        "text_align": "right"
+                                    }
+                                },
+                                {
+                                    "type": "line",
+                                    "x1": 118,
+                                    "y1": 13,
+                                    "x2": 196,
+                                    "y2": 13,
+                                    "stroke": {
+                                        "color": "#FCD34D",
+                                        "width": 0.35
+                                    }
+                                },
+                                {
+                                    "type": "text",
+                                    "x": 118,
+                                    "y": 16,
+                                    "content": "Total",
+                                    "style": {
+                                        "font_size": 9,
+                                        "font_weight": "bold",
+                                        "color": "#78350F"
+                                    }
+                                },
+                                {
+                                    "type": "text",
+                                    "x_anchor": {
+                                        "reference": "table_right",
+                                        "offset": 1
+                                    },
+                                    "y": 16,
+                                    "content": "$3,450.82",
+                                    "style": {
+                                        "font_size": 9,
+                                        "font_weight": "bold",
+                                        "color": "#3F3F46",
+                                        "width": 34,
+                                        "text_align": "right"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
