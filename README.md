@@ -1,5 +1,12 @@
 # gPdf Docs
 
+[![Release](https://img.shields.io/badge/release-v2026.05-E8573A?style=flat-square)](https://github.com/a0b1c0/gPdf-docs/blob/main/CHANGELOG.md)
+[![License](https://img.shields.io/badge/license-MIT-0F1114?style=flat-square)](./LICENSE)
+[![Runtime](https://img.shields.io/badge/runtime-Cloudflare%20Workers-F38020?style=flat-square&logo=cloudflare&logoColor=white)](https://gpdf.com)
+[![Built with](https://img.shields.io/badge/built%20with-Rust%20%2B%20WASM-DEA584?style=flat-square&logo=rust&logoColor=white)](https://gpdf.com)
+[![Uptime](https://img.shields.io/badge/uptime-99.99%25%20%2824h%29-success?style=flat-square)](https://gpdf.com/status/)
+[![Render p50](https://img.shields.io/badge/render%20p50-3%20ms-blue?style=flat-square)](https://gpdf.com)
+
 Public API documentation, executable examples, and comparison materials for the **gPdf** PDF rendering service.
 
 > gPdf turns a JSON `DocumentRequest` into a PDF document at the edge in 3–5 ms. Rust + WebAssembly running on Cloudflare Workers. No browser, no cold start, no document persistence.
