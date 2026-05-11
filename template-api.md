@@ -1,4 +1,3 @@
-
 # gPdf Template Render API
 
 > Status: Public API surface. Authoritative source for the public docs site.
@@ -10,6 +9,7 @@
 > `template-authoring.en.md` — that document is **not** part of the public
 > docs site.
 
+---
 
 ## 1. When to use this API
 
@@ -29,6 +29,7 @@ A simple test:
 - "Our team agreed on a template name and the fields we'll send" → Template Render.
 - "Our team is shipping a new layout that doesn't match anything" → JSON Render.
 
+---
 
 ## 2. Endpoint
 
@@ -58,6 +59,7 @@ Authentication, request ID, error envelope, rate-limit guidance, and limits
 are identical to the JSON Render API. See [api-reference.en.md §2](./api-reference.en.md#2-authentication-and-environments)
 and [§6](./api-reference.en.md#6-reference) for the shared contract.
 
+---
 
 ## 3. Quick Start
 
@@ -89,6 +91,7 @@ curl -X POST "https://api.gpdf.com/api/v1/template-render" \
 If you get a PDF back, your token, the route, and the template are all
 working. Move on to the field reference below.
 
+---
 
 ## 4. Request fields
 
@@ -203,6 +206,7 @@ by callers:
 
 Sending either returns `API-002`.
 
+---
 
 ## 5. Templates and environments
 
@@ -225,6 +229,7 @@ Errors you may see during integration:
 These surface as `API-002` (or `API-101` / `API-102` for the auth-related
 ones) under the standard error envelope.
 
+---
 
 ## 6. Discovering available templates
 
@@ -239,6 +244,7 @@ This is a deliberate choice for v1. A discovery endpoint may be added later
 and will be listed in the [api-reference.en.md changelog](./api-reference.en.md#7-changelog)
 when it is.
 
+---
 
 ## 7. Built-in example templates
 
@@ -366,6 +372,7 @@ Minimum example:
 }
 ```
 
+---
 
 ## 8. Validation rules
 
@@ -422,6 +429,7 @@ rely on it**:
 - A misspelled field name will silently render an empty value.
 - If you set a field but the rendered PDF is unchanged, the most likely cause is a typo or a wrong path.
 
+---
 
 ## 9. Errors
 
@@ -452,6 +460,7 @@ Sample error response:
 }
 ```
 
+---
 
 ## 10. Integration playbook
 

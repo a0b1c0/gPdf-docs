@@ -1,4 +1,3 @@
-
 # gPdf API Reference
 
 > Status: Public API surface. Authoritative source for the public docs site.
@@ -9,6 +8,7 @@
 > not listed here. Anything not documented here is **not** part of the public
 > contract and may change without notice.
 
+---
 
 ## 1. Overview
 
@@ -80,6 +80,7 @@ The following are intentionally **not** part of the public contract:
 - Template authoring (how to design and publish a template). See the internal `template-authoring.en.md` if you maintain templates.
 - Beta endpoints not listed in this document.
 
+---
 
 ## 2. Authentication and Environments
 
@@ -148,6 +149,7 @@ Recommended client behaviour today:
 - On `4xx`, do **not** retry. The request will fail the same way every time. Inspect `code` and `message` and fix the request.
 - For at-most-once semantics on PDF generation, deduplicate on your side before calling. The API does not detect duplicate submissions.
 
+---
 
 ## 3. Quick Start
 
@@ -199,6 +201,7 @@ After the minimum request succeeds, move on to:
 - [§5 E-Invoice Render API](#5-e-invoice-render-api) for compliance documents.
 - The Template Render API (`template-api.en.md`) for `template_id + data` integrations.
 
+---
 
 ## 4. JSON Render API
 
@@ -1673,6 +1676,7 @@ mode if the entire chain is silent". Practical consequences:
 - Children inherit the explicit family until one explicitly overrides.
 - Auto mode only activates when no ancestor has set a family at all.
 
+---
 
 ## 5. E-Invoice Render API
 
@@ -1814,6 +1818,7 @@ features can be used (e.g. transparency, embedded files). Violations return
 - X axis: rightward. Y axis: downward.
 - `rotation` is in degrees, clockwise. Most elements accept only `0/90/180/270`. `text` and `image` accept any integer angle. Barcodes and their attached `barcode_text` accept only the four cardinal angles.
 
+---
 
 ## 7. Changelog
 

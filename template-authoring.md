@@ -11,6 +11,20 @@
 >
 > Last updated: 2026-05-08.
 
+---
+
+## 1. Lifecycle
+
+A template moves through three stages:
+
+1. **Source template** — the JSON file the author writes. This is where layout, schema, and binding syntax live.
+2. **Compile** — the source is linted, type-checked against schema declarations, and converted into a runtime artifact.
+3. **Publish** — the runtime artifact is associated with a stable `template_id` and activated in an environment (test or production).
+
+Callers only see the third stage. They send `{ template_id, data }`; the
+runtime resolves the active artifact and binds the data.
+
+---
 
 ## 2. Schema
 
@@ -50,6 +64,7 @@ Example schema fragment:
 }
 ```
 
+---
 
 ## 3. Binding syntax
 
@@ -141,6 +156,7 @@ Constraints:
 - `_each` must reference a schema field of type `array`.
 - Inside the `_each` body, fields of the array element are referenced directly (`{{name}}`) or via the explicit `_item` namespace (`{{_item.name}}`).
 
+---
 
 ## 4. Compile-time lint
 
@@ -170,6 +186,7 @@ These prevent the template from publishing:
 - Arrays nested inside array items (the binder does not recursively validate inner array schemas today).
 - A page using `_each` while also containing a table with `rows: "{{#each ...}}"` (the runtime does not recursively expand both axes).
 
+---
 
 ## 5. Validation endpoint
 
@@ -191,6 +208,7 @@ look at the warnings before activating it in production.
 This endpoint is for the template authoring pipeline. It is not advertised
 to API callers.
 
+---
 
 ## 6. Currently unsupported features
 
@@ -210,6 +228,7 @@ files using them will fail compile:
 These are tracked for future template-engine versions. Until they are
 released, do not rely on them in source templates.
 
+---
 
 ## 7. Publishing checklist
 
@@ -222,6 +241,7 @@ Before activating a template in production:
 - [ ] The runtime artifact has been published and activated in production.
 - [ ] Caller teams have been notified of the new `template_id` and field schema.
 
+---
 
 ## 8. Style guidance for caller-facing field names
 
