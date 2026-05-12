@@ -78,7 +78,7 @@ This repo is the **public documentation surface** of gPdf:
 - ✅ Performance comparisons
 - ✅ Changelog mirror
 
-The **gPdf rendering engine itself is not public**. The website source — marketing site, blog, hreflang infrastructure — is at [a0b1c0/gPdf-website](https://github.com/a0b1c0/gPdf-website).
+The **gPdf rendering engine source code is not public**. The marketing-site source (Astro app, blog, hreflang infrastructure) is also kept private. This repository contains the public-facing API contract and integration material only.
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for issue + PR guidelines.
 

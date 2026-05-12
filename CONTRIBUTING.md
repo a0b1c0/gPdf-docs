@@ -5,7 +5,7 @@ Thanks for helping make the gPdf docs better.
 ## Filing issues
 
 - **API behaviour / wrong response / missing detail** → Issues in **this** repo.
-- **Website (gpdf.com) bugs, blog typos, marketing-site issues** → File at [a0b1c0/gPdf-website](https://github.com/a0b1c0/gPdf-website).
+- **Website (gpdf.com) bugs, blog typos, marketing-site issues** → Contact us via [the contact form on gpdf.com](https://gpdf.com/contact/) (marketing-site repo is private; we triage internally).
 - **Render-engine bugs (wrong PDF output for valid input)** → Contact us via [the contact form on gpdf.com](https://gpdf.com/contact/) (the engine source is private; we triage internally).
 
 When filing an API issue, please include:
@@ -23,4 +23,4 @@ The `examples/*.json` files are **executable** — every payload here renders su
 
 ## Source of truth
 
-The API reference markdown in this repo is mirrored from the marketing-site repo at [a0b1c0/gPdf-website/src/content/docs-source/](https://github.com/a0b1c0/gPdf-website/tree/main/src/content/docs-source). Updates to canonical API behaviour should land there first, then sync here.
+The API reference markdown in this repo is auto-synced from a private upstream (the marketing-site source) by a GitHub Action — typically within ~30 seconds of an upstream merge. PRs filed against the rendered files in this repo are welcome for typo fixes, broken-link repairs and additional examples; substantive API-behaviour changes should be raised as an issue first so we can route them to the upstream owners.
