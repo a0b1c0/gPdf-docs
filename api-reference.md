@@ -1893,10 +1893,14 @@ features can be used (e.g. transparency, embedded files). Violations return
 This document tracks the public API contract. Internal changes that do not
 affect callers are not listed here.
 
+### 2026-05-16
+
+- Added `settings.security` to JSON Render (`POST /api/v1/pdf/render`). Optional AES-128 or AES-256 PDF encryption with `open_password`, `owner_password` (Enterprise policy), and 8 permission bits (`print`, `modify`, `copy`, `annotate`, `fill_forms`, `extract_accessibility`, `assemble`, `print_high_quality`). Passwords capped at 32 UTF-8 bytes. Mutually exclusive with `settings.profile` (PDF/A) and `settings.e_invoice` — both combinations return `API-002`. Full field table, per-bit effect table, and tier matrix at §4.14.4.
+- Added §4.14.4 Security to the request reference.
+- §6.1 `API-002` trigger list extended with `settings.security` misuse cases (password >32 UTF-8 bytes, policy doesn't permit algorithm, combined with `settings.profile` / `settings.e_invoice`, or `permissions` provided without `owner_password`). Unrecognised `algorithm` value returns `API-001` at JSON deserialisation, not `API-002`.
+
 ### 2026-05-08
 
 - First publication of the consolidated public API reference.
 - Documented the e-invoice job and artifact endpoints (`GET /api/v1/e-invoice/jobs/{job_id}` and `.../artifacts/{artifact}`).
 - Single consolidated error-code reference at §6.1.
-
-(Future entries will be added as the API evolves.)
