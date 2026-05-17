@@ -952,7 +952,7 @@ may attach an optional `link: LinkSpec`.
 ```
 
 Stroke fields fall back through `settings.defaults.stroke` → service defaults
-when omitted (see §4.15).
+when omitted (see §4.16).
 
 #### 4.9.2 Rect
 
@@ -1456,10 +1456,12 @@ Recommended:
 Text inside `header` / `footer` follows the **section profile** (§4.6.4): no
 `list`, no `page_break`, no `frame.overflow = paginate`, no multi-column.
 
-### 4.13 Layers
+### 4.13 Layers (background, watermark, stamp)
 
 `layers` are document-level decorative layers. They do not participate in
-body pagination and do not consume `header` / `footer` height.
+body pagination and do not consume `header` / `footer` height. Use them
+for diagonal "DRAFT" / "PRIVATE COPY" watermarks, page background colour
+or paper textures, and "PAID" / approval stamps.
 
 ```json
 {
@@ -1581,7 +1583,7 @@ Common fields:
 | `profile` | `string` | PDF/A profile. See §6.4. |
 | `page_margin` | `PageMargin` | Global margin. See §4.3.2. |
 | `e_invoice` | `EInvoiceSettings` | **Only valid on `POST /api/v1/e-invoice/render`.** Sending it to JSON Render returns `API-002`. See §5. |
-| `security` | `SecuritySettings` | PDF password + permission protection. See §4.14.4. |
+| `security` | `SecuritySettings` | PDF password + permission protection. See §4.15. |
 
 #### 4.14.1 Defaults
 
@@ -1661,10 +1663,13 @@ Behaviour:
 - `file`: `Content-Disposition: attachment; filename="..."`. Browsers download.
 - Any value other than `binary` / `file` returns `API-002`.
 
-#### 4.14.4 Security (password + permissions)
+### 4.15 Security: PDF password and document permissions
 
 `settings.security` turns on PDF standard-security-handler encryption
-on the output PDF. **Only valid on `POST /api/v1/pdf/render`.** Mutually
+on the output PDF — AES-128 or AES-256, optional open password, optional
+owner password, and eight per-action permission flags (print / copy /
+modify / annotate / fill_forms / extract_accessibility / assemble /
+print_high_quality). **Only valid on `POST /api/v1/pdf/render`.** Mutually
 exclusive with `settings.profile` (PDF/A) and `settings.e_invoice` —
 combining either returns `API-002`.
 
@@ -1727,7 +1732,7 @@ combining either returns `API-002`.
 - Unrecognised `algorithm` values are rejected at JSON deserialisation with `API-001` (`settings.security.algorithm must be aes_128 or aes_256`).
 - All other `settings.security` misuses (password >32 UTF-8 bytes, policy disallow, combination with `profile` / `e_invoice`, semantic violation) return `API-002` with the offending field in `message`.
 
-### 4.15 Default value precedence
+### 4.16 Default value precedence
 
 When a field is omitted from an element, gPdf walks this chain to fill it in:
 
@@ -1893,10 +1898,14 @@ features can be used (e.g. transparency, embedded files). Violations return
 This document tracks the public API contract. Internal changes that do not
 affect callers are not listed here.
 
+### 2026-05-17
+
+- Docs-only outline reshuffle (no API changes). §4.13 renamed `Layers` → `Layers (background, watermark, stamp)` so the watermark feature is visible in the right-hand page outline. §4.14.4 `Security (password + permissions)` promoted to its own H3 §4.15 `Security: PDF password and document permissions` for the same reason. Old §4.15 `Default value precedence` renumbered to §4.16. Anchor URLs for §4.13, §4.15, and §4.16 changed; the §4.15 anchor that pointed at default-value-precedence now points at the security section, so update any external bookmarks accordingly. All field names (`settings.security`, `layers.watermark`, etc.) and behaviour are unchanged.
+
 ### 2026-05-16
 
-- Added `settings.security` to JSON Render (`POST /api/v1/pdf/render`). Optional AES-128 or AES-256 PDF encryption with `open_password`, `owner_password` (Enterprise policy), and 8 permission bits (`print`, `modify`, `copy`, `annotate`, `fill_forms`, `extract_accessibility`, `assemble`, `print_high_quality`). Passwords capped at 32 UTF-8 bytes. Mutually exclusive with `settings.profile` (PDF/A) and `settings.e_invoice` — both combinations return `API-002`. Full field table, per-bit effect table, and tier matrix at §4.14.4.
-- Added §4.14.4 Security to the request reference.
+- Added `settings.security` to JSON Render (`POST /api/v1/pdf/render`). Optional AES-128 or AES-256 PDF encryption with `open_password`, `owner_password` (Enterprise policy), and 8 permission bits (`print`, `modify`, `copy`, `annotate`, `fill_forms`, `extract_accessibility`, `assemble`, `print_high_quality`). Passwords capped at 32 UTF-8 bytes. Mutually exclusive with `settings.profile` (PDF/A) and `settings.e_invoice` — both combinations return `API-002`. Full field table, per-bit effect table, and tier matrix at §4.15 (was §4.14.4 at ship-time; renumbered 2026-05-17).
+- Added Security section to the request reference (originally §4.14.4, now §4.15).
 - §6.1 `API-002` trigger list extended with `settings.security` misuse cases (password >32 UTF-8 bytes, policy doesn't permit algorithm, combined with `settings.profile` / `settings.e_invoice`, or `permissions` provided without `owner_password`). Unrecognised `algorithm` value returns `API-001` at JSON deserialisation, not `API-002`.
 
 ### 2026-05-08
