@@ -1,4 +1,4 @@
-# gPdf E-Invoice Render API
+# E-invoice API
 
 `POST /api/v1/e-invoice/render` produces a PDF/A-3b document with a CII XML
 attachment, packaged according to the Factur-X or ZUGFeRD standard.

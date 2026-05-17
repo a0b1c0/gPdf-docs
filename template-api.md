@@ -1,4 +1,4 @@
-# gPdf Template Render API
+# Template API
 
 > Status: Public API surface. Authoritative source for the public docs site.
 > Last updated: 2026-05-08
