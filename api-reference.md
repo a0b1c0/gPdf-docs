@@ -1,4 +1,4 @@
-# gPdf API Reference
+# API reference
 
 > Status: Public API surface. Authoritative source for the public docs site.
 > Last updated: 2026-05-08
