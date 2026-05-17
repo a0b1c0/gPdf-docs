@@ -1581,6 +1581,7 @@ Common fields:
 | `profile` | `string` | PDF/A profile. See §6.4. |
 | `page_margin` | `PageMargin` | Global margin. See §4.3.2. |
 | `e_invoice` | `EInvoiceSettings` | **Only valid on `POST /api/v1/e-invoice/render`.** Sending it to JSON Render returns `API-002`. See §5. |
+| `security` | `SecuritySettings` | PDF password + permission protection. See §4.14.4. |
 
 #### 4.14.1 Defaults
 
@@ -1660,6 +1661,72 @@ Behaviour:
 - `file`: `Content-Disposition: attachment; filename="..."`. Browsers download.
 - Any value other than `binary` / `file` returns `API-002`.
 
+#### 4.14.4 Security (password + permissions)
+
+`settings.security` turns on PDF standard-security-handler encryption
+on the output PDF. **Only valid on `POST /api/v1/pdf/render`.** Mutually
+exclusive with `settings.profile` (PDF/A) and `settings.e_invoice` —
+combining either returns `API-002`.
+
+```json
+{
+  "settings": {
+    "security": {
+      "algorithm": "aes_256",
+      "open_password": "***",
+      "owner_password": "***",
+      "permissions": {
+        "print": true,
+        "modify": false,
+        "copy": false,
+        "annotate": false,
+        "fill_forms": true,
+        "extract_accessibility": true,
+        "assemble": false,
+        "print_high_quality": true
+      }
+    }
+  }
+}
+```
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `algorithm` | `"aes_128" \| "aes_256"` | Default `aes_128`. AES-128 = standard-security-handler revision 4 (`R=4`, `V=4`, AESV2 crypt filter, PDF 1.7 output). AES-256 = revision 6 (`R=6`, `V=5`, AESV3 crypt filter, PDF 2.0 output). |
+| `open_password` | `string` | Password required to open the PDF. Omitted, `null`, empty or whitespace-only = encryption disabled. Max 32 UTF-8 bytes. |
+| `owner_password` | `string` | Owner password granting full rights regardless of `permissions`. Must differ from `open_password`. Max 32 UTF-8 bytes. **Enterprise policy.** |
+| `permissions` | `Permissions` | 8 booleans, default `true`. Restricting any flag requires `owner_password`. **Enterprise policy.** |
+
+**Permissions** (each defaults to `true`):
+
+| Flag | Effect when `false` |
+|------|---------------------|
+| `print` | Printing is blocked. |
+| `print_high_quality` | High-quality printing is blocked (a low-res render may still be allowed by `print`). |
+| `modify` | Content edits other than annotations / form-field fill are blocked. |
+| `copy` | Selecting and copying text / graphics is blocked. |
+| `annotate` | Adding or modifying annotations AND form-field definitions is blocked. |
+| `fill_forms` | Filling existing form fields is blocked (independent of `annotate`). |
+| `extract_accessibility` | Extracting text / graphics for accessibility tools is blocked. |
+| `assemble` | Inserting / rotating / deleting pages, and creating bookmarks / thumbnails, is blocked. |
+
+**Tier policy:**
+
+| | Pro | Enterprise |
+|---|---|---|
+| Algorithms | AES-128 only | AES-128 or AES-256 |
+| `open_password` | ✓ | ✓ |
+| `owner_password` | — | ✓ |
+| `permissions` | — | ✓ |
+
+**Behaviour:**
+
+- The metadata stream is encrypted alongside the rest of the document; `/EncryptMetadata` writes `true`.
+- The token's xAdmin PDF Policy must allow `document.security.allow = true`, and `document.security.allowed_algorithms` must contain the requested algorithm.
+- A `settings.security` object that contains no valid `open_password`, no `owner_password`, and no restricted `permissions` is a no-op — the request renders an unencrypted PDF and does NOT enter the encryption write path.
+- Unrecognised `algorithm` values are rejected at JSON deserialisation with `API-001` (`settings.security.algorithm must be aes_128 or aes_256`).
+- All other `settings.security` misuses (password >32 UTF-8 bytes, policy disallow, combination with `profile` / `e_invoice`, semantic violation) return `API-002` with the offending field in `message`.
+
 ### 4.15 Default value precedence
 
 When a field is omitted from an element, gPdf walks this chain to fill it in:
@@ -1727,6 +1794,7 @@ Notes on validation errors (`API-002`):
   - Invalid `link` (unsupported URL scheme, page index out of bounds, malformed `padding` / `border`).
   - Invalid `table` (unknown column key, `table.width` cannot allocate a positive width to undeclared columns, invalid span).
   - Invalid `profile` value.
+  - Invalid `settings.security` (password >32 UTF-8 bytes, policy doesn't permit algorithm, combined with `settings.profile` or `settings.e_invoice`, or `permissions` provided without `owner_password`). Unrecognised `algorithm` value is rejected at JSON deserialisation with `API-001`.
 
 Notes on redaction:
 
