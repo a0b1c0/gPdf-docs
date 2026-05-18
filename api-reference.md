@@ -1678,8 +1678,8 @@ combining either returns `API-002`.
   "settings": {
     "security": {
       "algorithm": "aes_128",
-      "open_password": "***",
-      "owner_password": "***",
+      "open_password": "reader-demo",
+      "owner_password": "owner-demo",
       "permissions": {
         "print": true,
         "modify": false,
