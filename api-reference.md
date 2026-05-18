@@ -1,6 +1,6 @@
 # Render API
 
-> Status: Public API surface. Authoritative source for the public docs site.
+> Status: Public API surface. Source maintained in `a0b1c0/gPdf` under `doc/contracts/api/`; website and docs-site copies are synchronized publication outputs.
 > Last updated: 2026-05-08
 >
 > This document defines what callers of the gPdf HTTP API can rely on. It does
@@ -120,7 +120,8 @@ Rules:
 - A revoked or expired token returns `API-103` with a redacted message. Treat both as "rotate or contact support".
 
 The single endpoint that does not require authentication is
-`GET /api/v1/e-invoice/capabilities`. See [§5.1](#51-e-invoice-capabilities).
+`GET /api/v1/e-invoice/capabilities`. See the dedicated
+[E-invoice API reference](/docs/e-invoice-api/#1-capabilities).
 
 ### 2.3 Request IDs
 
@@ -1134,9 +1135,11 @@ Top-level fields:
 `TableColumnWidth`:
 
 ```json
-{ "mode": "fixed",   "value": 30 }
-{ "mode": "percent", "value": 25 }
-{ "mode": "auto" }
+[
+  { "mode": "fixed",   "value": 30 },
+  { "mode": "percent", "value": 25 },
+  { "mode": "auto" }
+]
 ```
 
 Rules:

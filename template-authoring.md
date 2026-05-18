@@ -74,13 +74,13 @@ The layout file references schema fields via three constructs.
 
 Plain field substitution:
 
-```json
+```text
 "content": "{{invoice_number}}"
 ```
 
 Mixed-string substitution:
 
-```json
+```text
 "content": "Invoice #{{invoice_number}}"
 ```
 
@@ -102,7 +102,7 @@ The object renders only when the bound value is non-empty.
 
 Expands an array into table rows:
 
-```json
+```text
 "rows": "{{#each items}}"
 ```
 

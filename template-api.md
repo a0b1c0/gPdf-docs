@@ -1,6 +1,6 @@
 # Template API
 
-> Status: Public API surface. Authoritative source for the public docs site.
+> Status: Public API surface. Source maintained in `a0b1c0/gPdf` under `doc/contracts/api/`; website and docs-site copies are synchronized publication outputs.
 > Last updated: 2026-05-08
 >
 > This document defines the Template Render API. For the lower-level JSON
@@ -188,7 +188,7 @@ Any value other than `binary` / `file` for `mode` returns `API-002`.
 ```json
 {
   "template_id": "invoice",
-  "data": [ { "invoice_number": "INV-001" /* ... */ } ],
+  "data": [ { "invoice_number": "INV-001" } ],
   "output": {
     "mode": "file",
     "file_name": "INV-001-2026-03-11.pdf"
