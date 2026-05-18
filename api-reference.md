@@ -30,6 +30,13 @@ A simple decision tree:
 All three return `application/pdf` on success and `application/json` on error,
 share the same authentication, and share the same error-code namespace.
 
+> **Machine-readable spec:** the full API contract is published as an
+> OpenAPI 3.1 document at [`/openapi.json`](/openapi.json)
+> (YAML mirror at [`/openapi.yaml`](/openapi.yaml)). Use it to generate
+> SDKs (`openapi-generator`), import into Postman / Insomnia, drive IDE
+> autocomplete, or hand to an AI coding assistant — the OpenAPI is the
+> canonical contract this document narrates.
+
 ### 1.1 Request and response basics
 
 Every request uses:
