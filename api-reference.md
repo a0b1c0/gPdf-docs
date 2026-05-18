@@ -1677,7 +1677,7 @@ combining either returns `API-002`.
 {
   "settings": {
     "security": {
-      "algorithm": "aes_256",
+      "algorithm": "aes_128",
       "open_password": "***",
       "owner_password": "***",
       "permissions": {
@@ -1694,6 +1694,8 @@ combining either returns `API-002`.
   }
 }
 ```
+
+> The example uses `aes_128` to match the default and the lowest tier that ships encryption (Pro). For AES-256 — PDF 2.0 standard-security-handler revision 6 — switch `algorithm` to `aes_256`; that path is Enterprise-only (see tier policy below). Both algorithms accept the same field shape.
 
 | Field | Type | Notes |
 |-------|------|-------|
