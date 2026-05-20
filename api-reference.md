@@ -123,7 +123,29 @@ The single endpoint that does not require authentication is
 `GET /api/v1/e-invoice/capabilities`. See the dedicated
 [E-invoice API reference](/docs/e-invoice-api/#1-capabilities).
 
-### 2.3 Request IDs
+### 2.3 AI Sandbox & Trial Testing (No-Key Authentication)
+
+For AI coding assistants (like Cursor, Copilot, or custom GPTs) and developers who wish to quickly test and debug their `DocumentRequest` JSON payloads without registering or managing API keys, gPdf provides a public Sandbox proxy endpoint.
+
+```http
+POST /api/playground?endpoint=pdf-render
+Host: gpdf.com
+Content-Type: application/json
+Accept: application/pdf
+```
+
+> [!NOTE]
+> **Sandbox Guidelines & Policies:**
+> 1. **No Authorization Header Required**: This trial sandbox automatically binds a secure developer key at the CDN edge. Do **NOT** include an `Authorization` header.
+> 2. **For Development & Trial Only**: This endpoint is strictly restricted for local debugging, layout validation, and interactive AI evaluation. It is **NOT** to be used for production workloads.
+> 3. **Automatic Trial Watermark**: All PDFs generated via this trial sandbox endpoint are automatically stamped with a semi-transparent **`gpdf.com Sandbox - Test Only`** watermark to prevent spoofing and commercial misuse.
+> 4. **Rate Limits & Payload Boundaries**:
+>    - **Rate Limit**: Strictly limited to a maximum of **30 requests per minute per IP address**. Exceeding this rate returns a `429 Too Many Requests` status.
+>    - **Max Request Size**: The maximum request body size is **256 KB** (`MAX_BODY_BYTES = 256 * 1024`).
+>    - **Output Format**: Directly responds with `Content-Type: application/pdf` binary stream.
+> 5. **Commercial Use**: For clean production traffic (without watermarks), high-throughput needs, or advanced features, you must [register on the gPdf Console](https://gpdf.com) to purchase a commercial license and obtain your dedicated live `sk_live_<TOKEN>`.
+
+### 2.4 Request IDs
 
 Every request gets a request ID. You may supply one via the `X-Request-Id`
 header; if you don't, gPdf generates one. It is echoed in every response —
