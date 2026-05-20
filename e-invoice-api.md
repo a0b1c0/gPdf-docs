@@ -101,7 +101,7 @@ Minimum request:
       "xml": {
         "format": "cii",
         "encoding": "utf8",
-        "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rsm:CrossIndustryInvoice>...</rsm:CrossIndustryInvoice>"
+        "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rsm:CrossIndustryInvoice xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100\" />"
       }
     }
   },
@@ -129,7 +129,7 @@ curl -X POST "https://api.gpdf.com/api/v1/e-invoice/render" \
   "xml": {
     "format": "cii",
     "encoding": "utf8",
-    "content": "<?xml version=\"1.0\" ... ?>"
+    "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rsm:CrossIndustryInvoice xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100\" />"
   },
   "validation": {
     "level": "basic",
