@@ -1,5 +1,9 @@
 # E-invoice API
 
+> Status: Public API surface. Source maintained in `a0b1c0/gPdf` under `doc/contracts/api/`; website and docs-site copies are synchronized publication outputs.
+> Last updated: 2026-05-18
+
+
 `POST /api/v1/e-invoice/render` produces a PDF/A-3b document with a CII XML
 attachment, packaged according to the Factur-X or ZUGFeRD standard.
 

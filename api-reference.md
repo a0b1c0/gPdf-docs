@@ -1,7 +1,7 @@
 # Render API
 
 > Status: Public API surface. Source maintained in `a0b1c0/gPdf` under `doc/contracts/api/`; website and docs-site copies are synchronized publication outputs.
-> Last updated: 2026-05-08
+> Last updated: 2026-05-18
 >
 > This document defines what callers of the gPdf HTTP API can rely on. It does
 > not describe internal control-plane behaviour, infrastructure, or any field
@@ -1556,9 +1556,47 @@ Common fields:
 `watermark` rules:
 
 - `template.type` is currently only `text`.
-- `layout.preset`: `center`, `tile`, `diagonal_tile`.
+- `layout.preset`: `center`, `tile`, `diagonal_tile`, `arc_outside`, `arc_inside`, `wave`.
+- A single `watermark` selects one `layout.preset` behavior. Standard placement (`center`, `tile`, `diagonal_tile`) and path text placement (`arc_outside`, `arc_inside`, `wave`) are mutually exclusive.
 - `opacity` is in `[0, 1]`.
-- `layout.angle` accepts any degree value and is intended for tiling.
+- For `center`, `tile`, and `diagonal_tile`, `layout.angle` is text rotation in degrees.
+- For `arc_outside` and `arc_inside`, text is placed along a circular baseline. This is path text placement, not glyph-outline distortion.
+  - `center_x` / `center_y`: optional circle centre in mm. Defaults to page centre.
+  - `radius`: optional circle radius in mm. Defaults to `min(page.width, page.height) * 0.28`.
+  - `angle`: optional arc anchor angle in degrees. Defaults to `90` for `arc_outside` and `270` for `arc_inside`.
+- For `wave`, text is placed along a sine-wave baseline.
+  - `start_x` / `start_y`: optional wave start point in mm. Defaults to centred horizontally and page centre vertically.
+  - `amplitude`: optional wave amplitude in mm. Default `6`.
+  - `wavelength`: optional wave length in mm. Default `42`.
+- Path watermark limits are enforced by validation:
+  - Single-line text only.
+  - At most 32 grapheme clusters.
+  - `style.width`, `style.height`, `style.text_overflow`, `style.shrink_to_fit`, `style.background`, `style.decoration`, `style.link_style`, and `style.wrap_policy` are not supported for path watermarks.
+  - `gap_x`, `gap_y`, and `stagger_x` are only valid for tiled presets.
+
+Path watermark example:
+
+```json
+{
+  "template": {
+    "type": "text",
+    "content": "PRIVATE COPY"
+  },
+  "style": {
+    "font_size": 16,
+    "font_weight": "bold",
+    "color": "#B91C1C"
+  },
+  "opacity": 0.14,
+  "layout": {
+    "preset": "arc_outside",
+    "center_x": 105,
+    "center_y": 148,
+    "radius": 58,
+    "angle": 90
+  }
+}
+```
 
 ### 4.14 Settings
 
@@ -1909,6 +1947,10 @@ features can be used (e.g. transparency, embedded files). Violations return
 
 This document tracks the public API contract. Internal changes that do not
 affect callers are not listed here.
+
+### 2026-05-18
+
+- Added constrained path-text watermark presets to `layers.watermark.layout.preset`: `arc_outside`, `arc_inside`, and `wave`. The feature places short single-line text along circular or sine-wave baselines; it does not distort glyph outlines. Validation caps path watermark text at 32 grapheme clusters and rejects layout/style fields that would make rendering expensive or ambiguous.
 
 ### 2026-05-17
 
