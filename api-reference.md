@@ -315,8 +315,8 @@ position themselves in millimetres from the page's top-left corner unless
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
 | `size` | `string` | One of `size` or `width+height` | Named preset. Case-insensitive. |
-| `width` | `number` | One of `size` or `width+height` | Page width (mm). |
-| `height` | `number` | One of `size` or `width+height` | Page height (mm). |
+| `width` | `number` | One of `size` or `width+height` | Custom page width in mm. Must satisfy `10 <= width <= 2000`. |
+| `height` | `number` | One of `size` or `width+height` | Custom page height in mm. Must satisfy `10 <= height <= 2000`. |
 | `margin` | `PageMargin` | No | Per-page margin override. |
 | `elements` | `Element[]` | No | Body elements. May be empty. |
 
@@ -324,6 +324,7 @@ Rules:
 
 - `size` and `width/height` are mutually exclusive on the same page. Providing both returns `API-002`.
 - A page without `size` must provide both `width` and `height`.
+- Custom `width` / `height` values are in millimetres and are limited to `10 <= value <= 2000` per side. This covers standard paper, labels, engineering drawings, and common posters while catching common unit mistakes such as inches or pixels submitted as millimetres.
 
 #### 4.3.1 Size presets
 
@@ -1871,6 +1872,7 @@ Notes on validation errors (`API-002`):
 
 - `API-002` is the most common error. Common triggers include:
   - `x` and `x_anchor` provided on the same element (mutually exclusive).
+  - Custom `page.width` / `page.height` outside the supported `10 <= value <= 2000 mm` range.
   - `font_mode` provided without a same-level `font_family`.
   - Explicit font in `strict` mode that does not cover the submitted text.
   - Invalid `link` (unsupported URL scheme, page index out of bounds, malformed `padding` / `border`).
