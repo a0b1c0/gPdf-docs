@@ -27,11 +27,8 @@ A simple decision tree:
 - "My team agreed on a template name and a list of fields." → Template Render
 - "I need an EU-mandate-compliant electronic invoice." → E-Invoice Render
 
-JSON Render and Template Render return `application/pdf` on success.
-E-Invoice Render returns `application/pdf` for `delivery.mode = inline_pdf`
-and a JSON job descriptor for `delivery.mode = object`. All three return
-`application/json` on error, share the same authentication, and share the
-same error-code namespace.
+All three return `application/pdf` on success and `application/json` on error,
+share the same authentication, and share the same error-code namespace.
 
 > **Machine-readable spec:** the full API contract is published as an
 > OpenAPI 3.1 document at [`/openapi.json`](/openapi.json)
@@ -126,31 +123,7 @@ The single endpoint that does not require authentication is
 `GET /api/v1/e-invoice/capabilities`. See the dedicated
 [E-invoice API reference](/docs/e-invoice-api/#1-capabilities).
 
-### 2.3 AI Sandbox & Trial Testing (No-Key Authentication)
-
-For AI coding assistants such as Cursor, Copilot, custom GPTs, and developers
-who want to quickly test or debug `DocumentRequest` JSON payloads without
-registering or managing API keys, gPdf provides a public sandbox proxy endpoint.
-
-```http
-POST /api/playground?endpoint=pdf-render
-Host: gpdf.com
-Content-Type: application/json
-Accept: application/pdf
-```
-
-> [!NOTE]
-> **Sandbox guidelines and policies:**
-> 1. **No Authorization header required**: this trial sandbox automatically binds a secure developer key at the CDN edge. Do **not** include an `Authorization` header.
-> 2. **Development and trial only**: this endpoint is restricted to local debugging, layout validation, and interactive AI evaluation. It is **not** for production workloads.
-> 3. **Automatic trial watermark**: PDFs generated through this trial sandbox are stamped with a semi-transparent `gpdf.com Sandbox - Test Only` watermark to prevent spoofing and commercial misuse.
-> 4. **Rate limits and payload boundaries**:
->    - **Rate limit**: maximum **30 requests per minute per IP address**. Exceeding this returns `429 Too Many Requests`.
->    - **Max request size**: request JSON is limited to **256 KB**.
->    - **Output format**: the response is an `application/pdf` binary stream.
-> 5. **Commercial use**: for clean production traffic without watermarks, higher throughput, or advanced features, register in the gPdf Console and use a dedicated live token.
-
-### 2.4 Request IDs
+### 2.3 Request IDs
 
 Every request gets a request ID. You may supply one via the `X-Request-Id`
 header; if you don't, gPdf generates one. It is echoed in every response —
@@ -171,7 +144,7 @@ curl -X POST "https://api.gpdf.com/api/v1/pdf/render" \
   --output out.pdf
 ```
 
-### 2.5 Rate limiting and retries
+### 2.4 Rate limiting and retries
 
 gPdf does **not** currently publish rate-limit headers (`X-RateLimit-*`,
 `Retry-After`) or an idempotency-key contract. This is a deliberate omission
@@ -315,8 +288,8 @@ position themselves in millimetres from the page's top-left corner unless
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
 | `size` | `string` | One of `size` or `width+height` | Named preset. Case-insensitive. |
-| `width` | `number` | One of `size` or `width+height` | Custom page width in mm. Must satisfy `10 <= width <= 2000`. |
-| `height` | `number` | One of `size` or `width+height` | Custom page height in mm. Must satisfy `10 <= height <= 2000`. |
+| `width` | `number` | One of `size` or `width+height` | Page width (mm). |
+| `height` | `number` | One of `size` or `width+height` | Page height (mm). |
 | `margin` | `PageMargin` | No | Per-page margin override. |
 | `elements` | `Element[]` | No | Body elements. May be empty. |
 
@@ -324,7 +297,6 @@ Rules:
 
 - `size` and `width/height` are mutually exclusive on the same page. Providing both returns `API-002`.
 - A page without `size` must provide both `width` and `height`.
-- Custom `width` / `height` values are in millimetres and are limited to `10 <= value <= 2000` per side. This covers standard paper, labels, engineering drawings, and common posters while catching common unit mistakes such as inches or pixels submitted as millimetres.
 
 #### 4.3.1 Size presets
 
@@ -955,7 +927,7 @@ Image source — exactly one of:
 ```json
 { "type": "image", "x": 4, "y": 8, "width": 33, "height": 11,
   "source": { "kind": "base64", "format": "jpg",
-              "payload": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAIAAgDAREAAhEBAxEB/8QAFAABAAAAAAAAAAAAAAAAAAAAB//EABQQAQAAAAAAAAAAAAAAAAAAAAD/xAAVAQEBAAAAAAAAAAAAAAAAAAAHCP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/ACpaAPf/2Q==" } }
+              "payload": "/9j/4AAQSkZJRgABAQAASABIAAD/4QBARXhpZgAATU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAABSqADAAQAAAABAAAAbgAAAAD/7QA4UGhvdG9zaG9wIDMuMAA4QklNBAQAAAAAAAA4QklNBCUAAAAAABDUHYzZjwCyBOmACZjs+EJ+/+IH2ElDQ19QUk9GSUxFAAEBAAAHyGFwcGwCIAAAbW50clJHQiBYWVogB9kAAgAZAAsAGgALYWNzcEFQUEwAAAAAYXBwbAAAAAAAAAAAAAAAAAAAAAAAAPbWAAEAAAAA0y1hcHBsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALZGVzYwAAAQgAAABvZHNjbQAAAXgAAAWKY3BydAAABwQAAAA4d3RwdAAABzwAAAAUclhZWgAAB1AAAAAUZ1hZWgAAB2QAAAAUYlhZWgAAB3gAAAAUclRSQwAAB4wAAAAOY2hhZAAAB5wAAAAsYlRSQwAAB4wAAAAOZ1RSQwAAB4wAAAAOZGVzYwAAAAAAAAAUR2VuZXJpYyBSR0IgUHJvZmlsZQAAAAAAAAAAAAAAFEdlbmVyaWMgUkdCIFByb2ZpbGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG1sdWMAAAAAAAAAHwAAAAxza1NLAAAAKAAAAYRkYURLAAAAJAAAAaxjYUVTAAAAJAAAAdB2aVZOAAAAJAAAAfRwdEJSAAAAJgAAAhh1a1VBAAAAKgAAAj5mckZVAAAAKAAAAmhodUhVAAAAKAAAApB6aFRXAAAAEgAAArhrb0tSAAAAFgAAAspuYk5PAAAAJgAAAuBjc0NaAAAAIgAAAwZoZUlMAAAAHgAAAyhyb1JPAAAAJAAAA0ZkZURFAAAALAAAA2ppdElUAAAAKAAAA5ZzdlNFAAAAJgAAAuB6aENOAAAAEgAAA75qYUpQAAAAGgAAA9BlbEdSAAAAIgAAA+pwdFBPAAAAJgAABAxubE5MAAAAKAAABDJlc0VTAAAAJgAABAx0aFRIAAAAJAAABFp0clRSAAAAIgAABH5maUZJAAAAKAAABKBockhSAAAAKAAABMhwbFBMAAAALAAABPBydVJVAAAAIgAABRxlblVTAAAAJgAABT5hckVHAAAAJgAABWQAVgFhAGUAbwBiAGUAYwBuAP0AIABSAEcAQgAgAHAAcgBvAGYAaQBsAEcAZQBuAGUAcgBlAGwAIABSAEcAQgAtAHAAcgBvAGYAaQBsAFAAZQByAGYAaQBsACAAUgBHAEIAIABnAGUAbgDoAHIAaQBjAEMepQB1ACAAaADsAG4AaAAgAFIARwBCACAAQwBoAHUAbgBnAFAAZQByAGYAaQBsACAAUgBHAEIAIABHAGUAbgDpAHIAaQBjAG8EFwQwBDMEMAQ7BEwEPQQ4BDkAIAQ/BEAEPgREBDAEOQQ7ACAAUgBHAEIAUAByAG8AZgBpAGwAIABnAOkAbgDpAHIAaQBxAHUAZQAgAFIAVgBCAMEAbAB0AGEAbADhAG4AbwBzACAAUgBHAEIAIABwAHIAbwBmAGkAbJAadSgAUgBHAEKCcl9pY8+P8Md8vBgAIABSAEcAQgAg1QS4XNMMx3wARwBlAG4AZQByAGkAcwBrACAAUgBHAEIALQBwAHIAbwBmAGkAbABPAGIAZQBjAG4A/QAgAFIARwBCACAAcAByAG8AZgBpAGwF5AXoBdUF5AXZBdwAIABSAEcAQgAgBdsF3AXcBdkAUAByAG8AZgBpAGwAIABSAEcAQgAgAGcAZQBuAGUAcgBpAGMAQQBsAGwAZwBlAG0AZQBpAG4AZQBzACAAUgBHAEIALQBQAHIAbwBmAGkAbABQAHIAbwBmAGkAbABvACAAUgBHAEIAIABnAGUAbgBlAHIAaQBjAG9mbpAaAFIARwBCY8+P8GWHTvZOAIIsACAAUgBHAEIAIDDXMO0w1TChMKQw6wOTA7UDvQO5A7oDzAAgA8ADwQO/A8YDrwO7ACAAUgBHAEIAUABlAHIAZgBpAGwAIABSAEcAQgAgAGcAZQBuAOkAcgBpAGMAbwBBAGwAZwBlAG0AZQBlAG4AIABSAEcAQgAtAHAAcgBvAGYAaQBlAGwOQg4bDiMORA4fDiUOTAAgAFIARwBCACAOFw4xDkgOJw5EDhsARwBlAG4AZQBsACAAUgBHAEIAIABQAHIAbwBmAGkAbABpAFkAbABlAGkAbgBlAG4AIABSAEcAQgAtAHAAcgBvAGYAaQBpAGwAaQBHAGUAbgBlAHIAaQENAGsAaQAgAFIARwBCACAAcAByAG8AZgBp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" } }
 ```
 
 Rules:
@@ -1676,7 +1648,7 @@ Path watermark example:
 
 | Subkey | Type | Notes |
 |--------|------|-------|
-| `text` | `TextStyle` | Default text style. If `font_family` is set here without `font_mode`, `strict` is used. Use `font_mode = "prefer"` with the same `font_family` when this default should allow fallback, for example mixed Latin + CJK text. |
+| `text` | `TextStyle` | Default text style. If `font_family` is set here without `font_mode`, `strict` is used. |
 | `stroke` | `StrokeStyle` | Default stroke for shapes and table grids. |
 | `fill` | `FillStyle` | Default fill. Default opacity is `0` (transparent) when omitted. |
 | `shape` | `ShapeDefaults` | `corner_radius` (mm) for default rounded rectangles. |
@@ -1864,7 +1836,7 @@ billing/entitlement (`API-2xx`), and rendering/system (`API-5xx` / `API-9xx`).
 | `API-501` | `500` | Render | PDF generation failed during rendering. | Detailed message describing the cause | Inspect `message`. Often points to invalid font, asset, or coordinate. |
 | `API-502` | `500` | Render | PDF/A compliance check failed after rendering. | `PDF/A compliance check failed: <reason>` | Adjust the offending field (commonly fonts not in the embedded set, or non-PDF/A images). |
 | `API-503` to `API-507` | `500` | Render | Specific rendering subsystem failures (font, asset resolution, layout). | Detailed message | Inspect `message`. These preserve actionable detail intentionally. |
-| `API-504` | `500` | Render | Resource loading failed. For fonts, this includes auto / `prefer` fallback exhaustion. | `Font fallback failed for: <run>` or another resource message | Provide a `font_family` that covers the script, upload the missing font as an asset, or verify the referenced image/font asset. |
+| `API-504` | `500` | Render | Font resolution exhausted all fallbacks (auto / `prefer` mode). | `Font fallback failed for: <run>` | Provide a `font_family` that covers the script, or upload the font as an asset. |
 | `API-900` | `500` | System | Internal system error. | Redacted message | Retry once. If it persists, contact support with the `req_id`. |
 | `API-999` | `500` | System | Unknown internal error. | Redacted message | Same as `API-900`. |
 
@@ -1872,7 +1844,6 @@ Notes on validation errors (`API-002`):
 
 - `API-002` is the most common error. Common triggers include:
   - `x` and `x_anchor` provided on the same element (mutually exclusive).
-  - Custom `page.width` / `page.height` outside the supported `10 <= value <= 2000 mm` range.
   - `font_mode` provided without a same-level `font_family`.
   - Explicit font in `strict` mode that does not cover the submitted text.
   - Invalid `link` (unsupported URL scheme, page index out of bounds, malformed `padding` / `border`).
@@ -1931,30 +1902,21 @@ will list them and clients can opt in.
 
 ### 6.4 Fonts and PDF/A profiles
 
-Font resolution is controlled by `font_family` and `font_mode`:
+Font resolution modes:
 
-- **Auto**: when no `font_family` is declared anywhere in the inheritance chain, the renderer chooses fonts that cover each text run from the bundled font set. `font_mode = "auto"` is not a public input value.
-- **`prefer`**: when `font_family` and `font_mode = "prefer"` are declared in the same style object, the renderer tries the declared family first and falls back through bundled families for glyphs it cannot cover.
-- **`strict`**: when `font_family` is declared with `font_mode = "strict"`, or declared without `font_mode`, the renderer must use that family. If the family cannot cover the text, the request fails with `API-002`.
-
-Practical CJK guidance:
-
-- If you do not declare `font_family` anywhere, auto mode can select bundled CJK fonts.
-- If you declare a Latin/default family such as `NotoSans-Regular` or `RobotoMono-Regular` and the text may contain Chinese, Japanese, or Korean characters, set `font_mode = "prefer"` in the same style object.
-- If you declare a family without `font_mode = "prefer"`, the request is strict. Mixed CJK text that the declared family cannot cover returns `API-002`.
+- **Auto** (no `font_family` declared anywhere in the chain): the renderer chooses fonts that cover the text from the bundled font set.
+- **`prefer`** (declared `font_family` + `font_mode = "prefer"`): the renderer tries the declared family first; if it cannot cover all glyphs, it falls back through bundled families.
+- **`strict`** (declared `font_family` + `font_mode = "strict"`, or `font_family` declared at the `defaults` / element level without `font_mode`): the renderer must use the declared family. If the family cannot cover the text, returns `API-002`.
 
 Failure modes:
 
-- Strict coverage miss → `API-002`. Adjust the text or pick a font that covers it, or switch the same style object to `font_mode = "prefer"`.
+- Strict miss → `API-002`. Adjust the text or pick a font that covers it.
 - Auto / prefer total fallback miss → `API-504`. The bundled set could not cover the text in any family.
 
-Bundled CJK fallback maps Hangul to `NotoSansKR-Regular`, Japanese kana to
-`NotoSansJP-Regular`, and CJK ideographs / fullwidth punctuation to
-`NotoSansSC-Regular`. The bundled set also includes Latin, Greek, Cyrillic,
-Arabic, Hebrew, Bengali, Tamil, Thai, Vietnamese, Osage, and monospace fonts.
-This is not full Unicode coverage; unsupported scripts or symbols may still
-fail in auto / prefer mode with `API-504`. Custom fonts can be uploaded as
-assets via the Console and referenced by `font_family`.
+Bundled fonts cover Latin, Greek, Cyrillic, CJK (Simplified Chinese, Japanese,
+Korean), Arabic, Devanagari, Bengali, Thai, plus a JetBrains-style monospace.
+Custom fonts can be uploaded as assets via the Console and referenced by
+`font_family`.
 
 PDF/A profiles:
 
