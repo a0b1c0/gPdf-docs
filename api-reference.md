@@ -1,7 +1,7 @@
 # Render API
 
 > Status: Public API surface. Source maintained in `a0b1c0/gPdf` under `doc/contracts/api/`; website and docs-site copies are synchronized publication outputs.
-> Last updated: 2026-05-18
+> Last updated: 2026-05-26
 >
 > This document defines what callers of the gPdf HTTP API can rely on. It does
 > not describe internal control-plane behaviour, infrastructure, or any field
@@ -93,16 +93,16 @@ The following are intentionally **not** part of the public contract:
 
 ### 2.1 Environments
 
-gPdf runs two public environments. They are isolated: tokens, templates, and
-e-invoice jobs do not cross over.
+gPdf exposes one public customer-facing API base URL:
 
 | Environment | Base URL | Purpose |
 |-------------|----------|---------|
 | Production | `https://api.gpdf.com` | Live traffic. SLAs apply. |
-| Test | `https://api-test.gpdf.com` | Pre-integration sandbox. Same API shape, separate tokens, separate templates, no SLA. |
 
 Build your client so the base URL is configuration, not a constant. Most
 integrations read it from an environment variable like `GPDF_BASE_URL`.
+Internal debug and test domains are not part of the public API contract and are
+intentionally omitted from public docs and OpenAPI.
 
 ### 2.2 Authentication
 
@@ -115,7 +115,7 @@ Authorization: Bearer sk_live_<YOUR_API_KEY>
 Rules:
 
 - The token is opaque. Do not parse it.
-- Tokens are environment-scoped. A test token will be rejected by production with `API-102`.
+- Tokens are scoped to the account and deployed API surface. A token not valid for the public API is rejected with `API-102`.
 - Tokens may carry policy constraints (max pages per request, allowed PDF/A profiles, allowed e-invoice standards). Constraint violations return `API-002` with the offending field named in `message`.
 - A revoked or expired token returns `API-103` with a redacted message. Treat both as "rotate or contact support".
 
@@ -123,7 +123,32 @@ The single endpoint that does not require authentication is
 `GET /api/v1/e-invoice/capabilities`. See the dedicated
 [E-invoice API reference](/docs/e-invoice-api/#1-capabilities).
 
-### 2.3 Request IDs
+### 2.3 AI Sandbox & Trial Testing (No-Key Authentication)
+
+For AI coding assistants such as Cursor, Copilot, custom GPTs, and developers
+who want to quickly test or debug `DocumentRequest` JSON payloads without
+registering or managing API keys, gPdf provides a public sandbox proxy endpoint.
+
+```http
+POST /api/playground?endpoint=pdf-render
+Host: gpdf.com
+Content-Type: application/json
+Accept: application/pdf
+```
+
+> [!NOTE]
+> **Sandbox guidelines and policies:**
+> 1. **No Authorization header required**: this trial sandbox automatically binds a secure developer key at the CDN edge. Do **not** include an `Authorization` header.
+> 2. **Development and trial only**: this endpoint is restricted to local debugging, layout validation, and interactive AI evaluation. It is **not** for production workloads.
+> 3. **Automatic trial watermark**: PDFs generated through this trial sandbox are stamped with a semi-transparent `gpdf.com Sandbox - Test Only` watermark to prevent spoofing and commercial misuse.
+> 4. **Rate limits and payload boundaries**:
+>    - **Rate limit**: maximum **30 requests per minute per IP address**. Exceeding this returns `429 Too Many Requests`.
+>    - **Max request size**: request JSON is limited to **256 KB**.
+>    - **Output format**: the response is an `application/pdf` binary stream.
+> 5. **Registered Free tier**: after signing up, Free-tier accounts receive **100 free PDF page credits per day** for evaluation with a live token. A one-page PDF consumes one page credit; multi-page PDFs consume one credit per generated page. Free-tier requests may be intentionally paced and are typically about **1 second slower per request** than paid plans.
+> 6. **Commercial use**: for clean production traffic without watermarks, higher throughput, or advanced features, register in the gPdf Console and use a paid live token.
+
+### 2.4 Request IDs
 
 Every request gets a request ID. You may supply one via the `X-Request-Id`
 header; if you don't, gPdf generates one. It is echoed in every response —
@@ -144,7 +169,7 @@ curl -X POST "https://api.gpdf.com/api/v1/pdf/render" \
   --output out.pdf
 ```
 
-### 2.4 Rate limiting and retries
+### 2.5 Rate limiting and retries
 
 gPdf does **not** currently publish rate-limit headers (`X-RateLimit-*`,
 `Retry-After`) or an idempotency-key contract. This is a deliberate omission
@@ -198,7 +223,7 @@ You should get a 100 × 150 mm one-page PDF on disk. If you don't:
 | Symptom | Likely cause | Fix |
 |---------|--------------|-----|
 | `401` with `API-101` | Missing or malformed `Authorization` header | Confirm the header is exactly `Bearer <token>`. |
-| `401` with `API-102` | Token rejected | Confirm the token belongs to the environment you are calling. |
+| `401` with `API-102` | Token rejected | Confirm the token is active and valid for the public API. |
 | `400` with `API-001` | Body is not valid JSON | Check the file with `jq .` or a JSON linter. |
 | `400` with `API-002` | Body parsed but failed validation | Read `message` — it names the offending field. |
 | `200` with empty body | Saved with `--output` but the response is JSON | Drop `--output`, re-run; you will see a JSON error envelope. |
@@ -288,8 +313,8 @@ position themselves in millimetres from the page's top-left corner unless
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
 | `size` | `string` | One of `size` or `width+height` | Named preset. Case-insensitive. |
-| `width` | `number` | One of `size` or `width+height` | Page width (mm). |
-| `height` | `number` | One of `size` or `width+height` | Page height (mm). |
+| `width` | `number` | One of `size` or `width+height` | Custom page width in mm. Must be between `10` and `2000`. |
+| `height` | `number` | One of `size` or `width+height` | Custom page height in mm. Must be between `10` and `2000`. |
 | `margin` | `PageMargin` | No | Per-page margin override. |
 | `elements` | `Element[]` | No | Body elements. May be empty. |
 
@@ -297,6 +322,7 @@ Rules:
 
 - `size` and `width/height` are mutually exclusive on the same page. Providing both returns `API-002`.
 - A page without `size` must provide both `width` and `height`.
+- Custom `width` / `height` values are in millimetres and are limited to `10..=2000` per side. This covers standard paper, labels, engineering drawings, and common posters while catching common unit mistakes such as inches or pixels submitted as millimetres.
 
 #### 4.3.1 Size presets
 
@@ -791,9 +817,14 @@ container.
 | Profile | Used in | Allowed blocks | Allowed inlines |
 |---------|---------|----------------|-----------------|
 | Full | `pages[].elements[]` (top-level body text) | `paragraph`, `list`, `page_break` | `text`, `variable`, `line_break`, `tab` |
-| Section | `header`, `footer`, `layers.background`, `layers.watermark`, `layers.stamp` | `paragraph` | `text`, `variable`, `line_break`, `tab` |
+| Section | `header`, `footer`, `layers.background`, `layers.stamp` | `paragraph` | `text`, `variable`, `line_break`, `tab` |
 | Table | Inside `table` cells | `paragraph` | `text`, `variable`, `line_break` |
 | Barcode | Inside `barcode_text` | `paragraph` | `text`, `variable`, `line_break` |
+
+`layers.watermark` does not use the normal `text` element profiles. It uses the
+separate `WatermarkLayer` contract: the public template type is currently
+`text`, layout is controlled by `layout.preset`, and validation follows the
+watermark-specific rules.
 
 All three restricted profiles reject `list` and `page_break`. Table and
 barcode profiles additionally reject `frame`, `tab`, and inline `link`. The
@@ -882,7 +913,7 @@ Optional: `style`, `options`, `barcode_text`, `rotation`, `z_index`,
 
 Rules:
 
-- `rotation` accepts only `0`, `90`, `180`, `270`.
+- For stable output, use only `0`, `90`, `180`, or `270`. The current PDF renderer treats other integer angles as `0`.
 - `barcode_text` inherits the same rotation.
 - `format` is case-insensitive. `-` and `_` are equivalent separators.
 - 2D / matrix codes encode as a module matrix; 1D / linear codes encode as bars; `maxicode` uses a hexagonal grid.
@@ -1171,11 +1202,43 @@ Complex cell:
 }
 ```
 
+Image and barcode cells use the same complex-cell envelope:
+
+```json
+{
+  "logo": {
+    "image": {
+      "width": 24,
+      "height": 9,
+      "asset": "brand-logo",
+      "format": "png"
+    },
+    "style": { "text": { "text_align": "center" } }
+  },
+  "tracking_code": {
+    "barcode": {
+      "format": "code128",
+      "content": "GPDF-0001",
+      "width": 40,
+      "height": 12,
+      "barcode_text": {
+        "enabled": true,
+        "position": "bottom",
+        "offset": 1,
+        "style": { "font_size": 6, "text_align": "center" }
+      }
+    }
+  }
+}
+```
+
 Complex cell fields:
 
 | Field | Type | Notes |
 |-------|------|-------|
 | `content` | `string \| number \| boolean \| null \| BlockTextContent` | Cell content. Scalars, or block text under the table profile (§4.6.4). |
+| `image` | `TableCellImage` | Cell image content. Body rows only. Mutually exclusive with `content` and `barcode`. |
+| `barcode` | `TableCellBarcode` | Cell barcode content. Body rows only. Mutually exclusive with `content` and `image`. |
 | `row_span` | `integer` | `>= 1`. Merge downward. |
 | `col_span` | `integer` | `>= 1`. Merge rightward. |
 | `style` | `TableCellStyle` | Per-cell override. |
@@ -1184,6 +1247,12 @@ Complex cell fields:
 Rules:
 
 - `null` renders as an empty string. `boolean` renders as `"true"` / `"false"`.
+- A complex cell may set at most one of `content`, `image`, or `barcode`.
+- `image` uses the same source contract as §4.8, but omits `x`, `y`, `x_anchor`, `z_index`, `comment`, and `link`; `width` and `height` are required. Table-cell image `rotation` must be `0`.
+- `barcode` uses the same `format`, `style`, `options`, and `barcode_text` contract as §4.7, but omits `x`, `y`, `x_anchor`, `z_index`, `comment`, and `link`; `format`, `content`, `width`, and `height` are required. Table-cell barcode `rotation` must be `0`.
+- Image and barcode cells participate in row-height measurement and table pagination. `barcode_text` height and offset are included in the measured row height.
+- `style.text.text_align` can align table-cell images and barcodes horizontally. Use `content_offset_x` / `content_offset_y` for small manual adjustments.
+- `columns[].header` and `header.rows[].cells[]` remain text/rich-text only; table-cell media is supported only in body `rows`.
 - Spans cannot exceed the table boundary or overlap each other. Violations return `API-002`.
 - Rows containing a key not declared in `columns[].key` return `API-002` (no silent ignore).
 
@@ -1648,7 +1717,7 @@ Path watermark example:
 
 | Subkey | Type | Notes |
 |--------|------|-------|
-| `text` | `TextStyle` | Default text style. If `font_family` is set here without `font_mode`, `strict` is used. |
+| `text` | `TextStyle` | Default text style. If `font_family` is set here without `font_mode`, `strict` is used. Use `font_mode = "prefer"` with the same `font_family` when this default should allow fallback, for example mixed Latin + CJK text. |
 | `stroke` | `StrokeStyle` | Default stroke for shapes and table grids. |
 | `fill` | `FillStyle` | Default fill. Default opacity is `0` (transparent) when omitted. |
 | `shape` | `ShapeDefaults` | `corner_radius` (mm) for default rounded rectangles. |
@@ -1824,10 +1893,10 @@ billing/entitlement (`API-2xx`), and rendering/system (`API-5xx` / `API-9xx`).
 | `API-001` | `400` | Client | Body is not valid JSON. | `Invalid JSON payload` | Validate with `jq .` or a JSON linter before sending. |
 | `API-002` | `400` | Client | Body parsed but failed schema or business validation. | `<field> must be >= 0`, `Missing required field <name>`, `Field type mismatch` | Read `message`. The field name is always included. |
 | `API-004` | `400` | Client | Total page count exceeds the per-request limit (token policy or platform max, whichever is smaller). | `page count exceeds max_pages_per_request` | Split the request into smaller batches, or request a higher policy limit. |
-| `API-007` | `400` | Client | Embedded image bytes exceed the per-image limit set by the active token policy. | `image bytes exceeds max_image_bytes` | Re-encode the image at a smaller size, or use `source.kind = "asset"` to reference a pre-uploaded asset. |
+| `API-007` | `400` | Client | Embedded image bytes exceed the renderer or active token policy limit. | `image bytes exceeds max_image_bytes` | Re-encode the image at a smaller size, or use `source.kind = "asset"` to reference a pre-uploaded asset. |
 | `API-008` | `413` | Client | Request body exceeds the platform body limit (default `16 MiB`; some deployments differ). | `Request body too large` | Reduce inline payload (especially base64 images). Consider splitting the document. |
 | `API-101` | `401` | Auth | `Authorization` header is missing or not in `Bearer <token>` form. | `Missing or malformed Authorization header` | Add the header. The format is exactly `Bearer ` followed by the token. |
-| `API-102` | `401` | Auth | Authentication failed (unknown token, environment mismatch, signature failure). | `Authentication failed` (redacted) | Verify the token belongs to the environment you are calling. |
+| `API-102` | `401` | Auth | Authentication failed (unknown token, invalid API surface, signature failure). | `Authentication failed` (redacted) | Verify the token is active and valid for the public API. |
 | `API-103` | `401` | Auth | Token is blacklisted (revoked, suspended, or otherwise invalidated). | `Authentication failed` (redacted) | Rotate the token via the Console, or contact support. |
 | `API-201` | `402` | Billing | No active subscription entitlement for this token. | `No active subscription` | Activate or renew a plan in the Console. |
 | `API-202` | `402` | Billing | Subscription expired. | `Subscription expired` | Renew in the Console. |
@@ -1836,7 +1905,7 @@ billing/entitlement (`API-2xx`), and rendering/system (`API-5xx` / `API-9xx`).
 | `API-501` | `500` | Render | PDF generation failed during rendering. | Detailed message describing the cause | Inspect `message`. Often points to invalid font, asset, or coordinate. |
 | `API-502` | `500` | Render | PDF/A compliance check failed after rendering. | `PDF/A compliance check failed: <reason>` | Adjust the offending field (commonly fonts not in the embedded set, or non-PDF/A images). |
 | `API-503` to `API-507` | `500` | Render | Specific rendering subsystem failures (font, asset resolution, layout). | Detailed message | Inspect `message`. These preserve actionable detail intentionally. |
-| `API-504` | `500` | Render | Font resolution exhausted all fallbacks (auto / `prefer` mode). | `Font fallback failed for: <run>` | Provide a `font_family` that covers the script, or upload the font as an asset. |
+| `API-504` | `500` | Render | Resource loading failed. For fonts, this includes auto / `prefer` fallback exhaustion. | `Font fallback failed for: <run>` or another resource message | Provide a `font_family` that covers the script, upload the missing font as an asset, or verify the referenced image/font asset. |
 | `API-900` | `500` | System | Internal system error. | Redacted message | Retry once. If it persists, contact support with the `req_id`. |
 | `API-999` | `500` | System | Unknown internal error. | Redacted message | Same as `API-900`. |
 
@@ -1844,6 +1913,7 @@ Notes on validation errors (`API-002`):
 
 - `API-002` is the most common error. Common triggers include:
   - `x` and `x_anchor` provided on the same element (mutually exclusive).
+  - Custom `page.width` / `page.height` outside the supported `10..=2000 mm` range.
   - `font_mode` provided without a same-level `font_family`.
   - Explicit font in `strict` mode that does not cover the submitted text.
   - Invalid `link` (unsupported URL scheme, page index out of bounds, malformed `padding` / `border`).
@@ -1861,7 +1931,7 @@ Notes on redaction:
 
 Three kinds of limits apply to every request:
 
-1. **Platform limits** — fixed across all tenants, set per environment.
+1. **Platform limits** — fixed across all tenants, set per deployment.
 2. **Policy limits** — bound to the token, set when the plan is provisioned.
 3. **Request-shape limits** — encoded in the request schema itself.
 
@@ -1869,7 +1939,7 @@ Three kinds of limits apply to every request:
 |-------|---------|-------|---------------|-----------------|
 | Request body size | `16 MiB` | Platform | Per-deployment env var; some private deployments raise it. | `API-008` |
 | Pages per request | No platform default — entirely policy-driven | Token policy | Plan or per-token policy in the Console. | `API-004` |
-| Image bytes per element | No platform default — only enforced if the policy sets `max_image_bytes` | Token policy | Plan or per-token policy in the Console. | `API-007` |
+| Image bytes per element | Raster images: `32 KiB`; SVG: `256 KiB`; deployments or token policy may be stricter | Renderer plus token policy | Re-encode the image, use a smaller asset, or adjust the token policy if your plan allows it. | `API-007` |
 | Template batch size (`data` array) | `10` items | Platform | Not configurable. Split into multiple requests if you need more. | `API-002` (`Template render data item count ... exceeds max 10`) |
 | URL TTL for e-invoice artifacts | `900` seconds | Request | `delivery.url_ttl_seconds`, range `1..900` | `API-002` if out of range |
 | Retention for e-invoice artifacts | `23` hours | Request | `retention.ttl_hours`, range `1..23` | `API-002` if out of range |
@@ -1902,21 +1972,30 @@ will list them and clients can opt in.
 
 ### 6.4 Fonts and PDF/A profiles
 
-Font resolution modes:
+Font resolution is controlled by `font_family` and `font_mode`:
 
-- **Auto** (no `font_family` declared anywhere in the chain): the renderer chooses fonts that cover the text from the bundled font set.
-- **`prefer`** (declared `font_family` + `font_mode = "prefer"`): the renderer tries the declared family first; if it cannot cover all glyphs, it falls back through bundled families.
-- **`strict`** (declared `font_family` + `font_mode = "strict"`, or `font_family` declared at the `defaults` / element level without `font_mode`): the renderer must use the declared family. If the family cannot cover the text, returns `API-002`.
+- **Auto**: when no `font_family` is declared anywhere in the inheritance chain, the renderer chooses fonts that cover each text run from the bundled font set. `font_mode = "auto"` is not a public input value.
+- **`prefer`**: when `font_family` and `font_mode = "prefer"` are declared in the same style object, the renderer tries the declared family first and falls back through bundled families for glyphs it cannot cover.
+- **`strict`**: when `font_family` is declared with `font_mode = "strict"`, or declared without `font_mode`, the renderer must use that family. If the family cannot cover the text, the request fails with `API-002`.
+
+Practical CJK guidance:
+
+- If you do not declare `font_family` anywhere, auto mode can select bundled CJK fonts.
+- If you declare a Latin/default family such as `NotoSans-Regular` or `RobotoMono-Regular` and the text may contain Chinese, Japanese, or Korean characters, set `font_mode = "prefer"` in the same style object.
+- If you declare a family without `font_mode = "prefer"`, the request is strict. Mixed CJK text that the declared family cannot cover returns `API-002`.
 
 Failure modes:
 
-- Strict miss → `API-002`. Adjust the text or pick a font that covers it.
+- Strict coverage miss → `API-002`. Adjust the text or pick a font that covers it, or switch the same style object to `font_mode = "prefer"`.
 - Auto / prefer total fallback miss → `API-504`. The bundled set could not cover the text in any family.
 
-Bundled fonts cover Latin, Greek, Cyrillic, CJK (Simplified Chinese, Japanese,
-Korean), Arabic, Devanagari, Bengali, Thai, plus a JetBrains-style monospace.
-Custom fonts can be uploaded as assets via the Console and referenced by
-`font_family`.
+Bundled CJK fallback maps Hangul to `NotoSansKR-Regular`, Japanese kana to
+`NotoSansJP-Regular`, and CJK ideographs / fullwidth punctuation to
+`NotoSansSC-Regular`. The bundled set also includes Latin, Greek, Cyrillic,
+Arabic, Hebrew, Bengali, Tamil, Thai, Vietnamese, Osage, and monospace fonts.
+This is not full Unicode coverage; unsupported scripts or symbols may still
+fail in auto / prefer mode with `API-504`. Custom fonts can be uploaded as
+assets via the Console and referenced by `font_family`.
 
 PDF/A profiles:
 
@@ -1939,7 +2018,7 @@ features can be used (e.g. transparency, embedded files). Violations return
 - Length unit: **millimetre** (mm). Floating-point values are accepted; the renderer rounds to PDF user-space at output.
 - Origin: top-left of the page, or the content box if `page_margin` is set.
 - X axis: rightward. Y axis: downward.
-- `rotation` is in degrees, clockwise. Most elements accept only `0/90/180/270`. `text` and `image` accept any integer angle. Barcodes and their attached `barcode_text` accept only the four cardinal angles.
+- `rotation` is in degrees, clockwise. `text` and `image` accept arbitrary angles. Barcodes and their attached `barcode_text` should use only `0/90/180/270`; the current PDF renderer treats other integer barcode angles as `0`.
 
 ---
 

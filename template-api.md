@@ -1,7 +1,7 @@
 # Template API
 
 > Status: Public API surface. Source maintained in `a0b1c0/gPdf` under `doc/contracts/api/`; website and docs-site copies are synchronized publication outputs.
-> Last updated: 2026-05-08
+> Last updated: 2026-05-26
 >
 > This document defines the Template Render API. For the lower-level JSON
 > Render API, see `api-reference.en.md`. For template authoring (designing,
@@ -51,9 +51,8 @@ curl -X POST "https://api.gpdf.com/api/v1/template-render" \
   --output out.pdf
 ```
 
-Both `https://api.gpdf.com` (production) and `https://api-test.gpdf.com`
-(test) host this endpoint. Tokens, templates, and artifacts do not cross
-between environments.
+This endpoint uses the same public production base URL as the JSON Render API:
+`https://api.gpdf.com`.
 
 Authentication, request ID, error envelope, rate-limit guidance, and limits
 are identical to the JSON Render API. See [api-reference.en.md §2](./api-reference.en.md#2-authentication-and-environments)
@@ -97,7 +96,7 @@ working. Move on to the field reference below.
 
 ```json
 {
-  "template_id": "f8m2zd",
+  "template_id": "invoice",
   "data": [
     { },
     { }
@@ -121,7 +120,8 @@ Stable per-template identifier issued by gPdf. Treat it as opaque.
 
 - `template_id` is what your callers depend on. It does **not** change when the template's display name changes.
 - Display names live in the Console, not in the API.
-- Some `template_id` values look like random short codes (`k4n82q`, `f8m2zd`, `0q7xmp`); others look like semantic slugs (`invoice`, `shipping_label`). Both are valid; do not parse them.
+- Built-in templates use stable semantic IDs such as `invoice`, `packing_list`, and `shipping_label`.
+- Custom templates may use generated short-code IDs such as `0q7xmp`. Both forms are valid; do not parse them.
 
 ### 4.2 `data`
 
@@ -210,11 +210,11 @@ Sending either returns `API-002`.
 
 ## 5. Templates and environments
 
-A template's `template_id` is stable across environments, but availability is
-environment-scoped:
+A template's `template_id` is stable, but availability is scoped to the active
+template runtime and the calling token:
 
-- Test and production maintain independent active templates. A template available in test is not automatically available in production.
-- A template can exist but be unavailable to your token if it is disabled in the current environment, or scoped to other clients.
+- A template can exist but be unavailable if no active runtime has been published.
+- A template can exist but be unavailable to your token if it is disabled or scoped to other clients.
 
 Errors you may see during integration:
 
@@ -469,9 +469,8 @@ When integrating a new template, follow this sequence:
 1. **Smoke-test with a tiny template first.** `shipping_label` has only a handful of required fields. If even that fails, the issue is auth or environment, not the template.
 2. **Add output controls next.** Verify `output.mode = "file"` and a custom `file_name` produce the expected `Content-Disposition`.
 3. **Then integrate templates with arrays.** `invoice.items[]` and `packing_list.items[]` exercise per-item type checks.
-4. **Cross-environment.** Once it works in test, repeat the smoke test in production. Tokens, templates, and quotas are all different.
-5. **Lock the contract.** Pin three things in your team's design doc:
-   - The exact `template_id` you use in each environment.
+4. **Lock the contract.** Pin three things in your team's design doc:
+   - The exact production `template_id` you use.
    - The list of fields and their types.
    - Your `output.mode` policy and file-name pattern.
 
