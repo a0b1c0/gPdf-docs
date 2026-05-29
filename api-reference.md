@@ -397,6 +397,7 @@ has a `type` discriminator.
 | `circle` | §4.9 | Circle by centre + radius. |
 | `ellipse` | §4.9 | Ellipse by centre + radii. |
 | `polygon` | §4.9 | Closed polygon from a point list. |
+| `path` | §4.9 | Structured native vector path. |
 | `link` | §4.9 | Standalone clickable hotspot. |
 | `table` | §4.10 | Tabular data with headers, spans, pagination. |
 | `stack` | §4.11 | Vertical composition of a table followed by trailing blocks. |
@@ -407,18 +408,18 @@ Common fields shared by most elements:
 |-------|------|-------|
 | `z_index` | `number` | Stacking order. Default `0`. Higher draws on top. |
 | `comment` | `string` | Free-form note. Not rendered. |
-| `rotation` | `number` | See per-element rules. Most elements support `0/90/180/270`; `text` and `image` accept any integer angle. |
-| `link` | `LinkSpec` | Make the element clickable. See §4.9.6. |
+| `rotation` | `number` | See per-element rules. Most elements support `0/90/180/270`; `text` accepts arbitrary integer angles, while `image` and `path` accept arbitrary numeric angles. |
+| `link` | `LinkSpec` | Make the element clickable. See §4.9.7. |
 
 Hyperlink modes:
 
-- Attach `link` to an element (`text`, `barcode`, `line`, `rect`, `circle`, `ellipse`, `polygon`, `image`).
+- Attach `link` to an element (`text`, `barcode`, `line`, `rect`, `circle`, `ellipse`, `polygon`, `path`, `image`).
 - Use a standalone `type: "link"` hotspot when you need to overlay a clickable region.
 
 #### 4.5.1 Horizontal anchor (`x_anchor`)
 
 `x_anchor` aligns elements relative to a reference edge instead of an absolute
-X. It is supported on `text`, `barcode`, `rect`, `image`, and `link`. It is
+X. It is supported on `text`, `barcode`, `rect`, `path`, `image`, and `link`. It is
 **not** supported on `line`, `circle`, `ellipse`, `polygon`, `table`,
 `stack`, or block-text content.
 
@@ -1047,13 +1048,51 @@ when omitted (see §4.16).
 }
 ```
 
-#### 4.9.6 Link spec and standalone link
+#### 4.9.6 Path
+
+`path` is a controlled native vector outline element. It does not accept an SVG
+`d` string; callers must send structured `commands`.
+
+```json
+{
+  "type": "path",
+  "x_anchor": { "reference": "content_right", "offset": 10 },
+  "y": 210,
+  "width": 50,
+  "height": 18,
+  "view_box": { "x": 0, "y": 0, "width": 500, "height": 180 },
+  "commands": [
+    { "cmd": "move_to", "x": 12, "y": 90 },
+    { "cmd": "cubic_to", "x1": 80, "y1": 20, "x2": 160, "y2": 170, "x": 240, "y": 80 },
+    { "cmd": "quad_to", "x1": 360, "y1": 10, "x": 488, "y": 92 }
+  ],
+  "stroke": {
+    "color": "#111111",
+    "width": 0.6,
+    "cap": "round",
+    "join": "round"
+  }
+}
+```
+
+Rules:
+
+- Use either `x` or `x_anchor`; `width` and `height` are page-space millimetres.
+- `view_box` defines the local coordinate system for `commands`; its `width` and `height` must be positive.
+- `commands` supports only `move_to`, `line_to`, `quad_to`, `cubic_to`, and `close`.
+- `commands[0]` must be `move_to`, and the path must contain at least one drawing command.
+- Command coordinates must stay within `view_box`; enlarge `view_box` when control points need to extend farther.
+- `stroke.width` is in page-space millimetres and is not scaled by `view_box`.
+- `stroke.compound` is not supported.
+- Attached `link` regions use the `x/y/width/height` bounding box.
+
+#### 4.9.7 Link spec and standalone link
 
 A `LinkSpec` is reused everywhere a hyperlink is allowed:
 
 ```json
 {
-  "target": { "type": "url", "url": "https://gpdf.com/docs/api-reference/#496-link-spec-and-standalone-link" },
+  "target": { "type": "url", "url": "https://gpdf.com/docs/api-reference/#497-link-spec-and-standalone-link" },
   "alt": "Open the official site",
   "padding": 1.0,
   "border": { "color": "#1A202C", "width": 0.3 }
@@ -1082,7 +1121,7 @@ Standalone link element:
   "y": 10,
   "width": 40,
   "height": 8,
-  "target": { "type": "url", "url": "https://gpdf.com/docs/api-reference/#496-link-spec-and-standalone-link" },
+  "target": { "type": "url", "url": "https://gpdf.com/docs/api-reference/#497-link-spec-and-standalone-link" },
   "alt": "Open website"
 }
 ```
@@ -1550,8 +1589,6 @@ or paper textures, and "PAID" / approval stamps.
       "elements": [
         {
           "type": "rect",
-          "x": 0, "y": 0,
-          "width": 215.9, "height": 279.4,
           "fill": { "color": "#FFFBEB" }
         }
       ]
@@ -1619,8 +1656,9 @@ Common fields:
 
 `background` / `stamp` element rules:
 
-- Allowed types: `text`, `image`, `rect`, `line`, `circle`, `ellipse`, `polygon`, `link`.
+- Allowed types: `text`, `image`, `rect`, `line`, `circle`, `ellipse`, `polygon`, `path`, `link`.
 - Forbidden types: `table`, `stack`.
+- For `rect` inside `layers.background.elements`, omitted `x` / `y` default to `0`, and omitted or `0` `width` / `height` default to the current page size. Normal `rect` elements still require explicit geometry.
 
 `watermark` rules:
 
