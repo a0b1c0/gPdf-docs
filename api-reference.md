@@ -373,12 +373,14 @@ Behaviour:
 - Elements that overflow the content box return `API-002`. There is no automatic clipping.
 - `header` and `footer` always use absolute page coordinates and ignore margins.
 - Auto-paginated overflow continues from the top of the next page's content box.
+- Without `page_margin`, auto-paginated overflow is rebased to `header.height + settings.pagination.continuation_top_gap_with_header` when a header exists, otherwise to `settings.pagination.continuation_top_gap`.
 
 ### 4.4 Coordinates and units
 
 - All coordinates and lengths are in millimetres (mm).
 - The origin is the top-left corner of the page (or the content box if `page_margin` is set).
 - The X axis goes right; the Y axis goes down.
+- Layout tip: without `page_margin`, `x: 0` starts at the physical left edge of the page. This is valid for full-page backgrounds, edge-aligned decoration, or bleed-like elements, but regular body content such as text, tables, and stacks should keep a readable left margin. Prefer `settings.page_margin` for document-level spacing, or set a positive `x` value such as `10-15mm`.
 - See [§6.5](#65-coordinates-and-units) for `rotation` rules per element.
 
 ### 4.5 Element types
@@ -1725,6 +1727,10 @@ Path watermark example:
       "file_name": "invoice-20260310.pdf"
     },
     "profile": "pdfa-2b",
+    "pagination": {
+      "continuation_top_gap": 8,
+      "continuation_top_gap_with_header": 5
+    },
     "page_margin": { "top": 10, "right": 12, "bottom": 10, "left": 12 }
   }
 }
@@ -1736,9 +1742,19 @@ Path watermark example:
 | `metadata` | `Metadata` | PDF metadata. See §4.14.2. |
 | `output` | `OutputSettings` | Response shape. See §4.14.3. |
 | `profile` | `string` | PDF/A profile. See §6.4. |
+| `pagination` | `DocumentPaginationSettings` | Document-level auto-pagination continuation settings. |
 | `page_margin` | `PageMargin` | Global margin. See §4.3.2. |
 | `e_invoice` | `EInvoiceSettings` | **Only valid on `POST /api/v1/e-invoice/render`.** Sending it to JSON Render returns `API-002`. See §5. |
 | `security` | `SecuritySettings` | PDF password + permission protection. See §4.15. |
+
+`DocumentPaginationSettings`:
+
+| Field | Type | Default | Notes |
+|-------|------|---------|-------|
+| `continuation_top_gap` | `number` | `8` | Top gap in mm for generated continuation pages when no `header` is present and no `page_margin` is configured. |
+| `continuation_top_gap_with_header` | `number` | `5` | Gap in mm after `header.height` for generated continuation pages when a `header` exists and no `page_margin` is configured. |
+
+These fields only affect auto-paginated continuation content. They do not move first-page elements, which keep their absolute coordinates unless `page_margin` is configured. When `page_margin` or `pages[].margin` is configured, continuation content starts at the next page's content-box top instead of using these gaps.
 
 #### 4.14.1 Defaults
 
