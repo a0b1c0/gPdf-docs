@@ -132,7 +132,7 @@ Element types: `text`, `barcode`, `image`, `line`, `rect`, `circle`, `ellipse`, 
 
 `x_anchor` is supported for `text`, `image`, `barcode`, `rect`, `circle`, `ellipse`, `polygon`, `path`, `link`, and `line`.
 
-`path` does not accept raw SVG `d` strings. It supports structured commands equivalent to `M`, `L`, `Q`, `C`, and `Z`: `move_to`, `line_to`, `quad_to`, `cubic_to`, and `close`. It does not support `A/H/V/S/T`, lowercase relative commands, full `d` strings, or SVG DOM input. A path must start with `move_to`, contain at least one drawing command, and stay inside its `view_box`. Handwritten signatures can be represented after the caller converts sampled points into these structured commands.
+`path` accepts SVG path data through the `d` field. Supported syntax includes `M/L/H/V/Q/C/S/T/A/Z` plus lowercase relative variants; `A/a` arcs are accepted. This is not a full SVG parser: SVG DOM, `<path>` XML, style, transform, and external resources are not accepted. A path must start with `M/m`, include at least one drawable segment, and keep coordinates and control points inside its `view_box`. Handwritten signatures can submit the corresponding `d` directly.
 
 Tables support rows, columns, borders, backgrounds, text styles, repeated headers, cell spans, and pagination. Media content inside cells is supported for body rows; header cells should use text.
 
