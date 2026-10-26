@@ -118,14 +118,47 @@ Full example:
 ```json
 {
   "type": "table",
-  "x": 12,
-  "y": 80,
+  "layout": {
+    "left": 12,
+    "top": 80
+  },
   "width": 180,
+  "pagination": {
+    "row_min_height": 10,
+    "header_min_height": 12
+  },
   "columns": [
-    { "key": "description", "header": "Description", "width": { "mode": "auto" } },
-    { "key": "qty",         "header": "Qty",         "width": { "mode": "fixed", "value": 18 } },
-    { "key": "unit_price",  "header": "Unit Price",  "width": { "mode": "fixed", "value": 30 } },
-    { "key": "amount",      "header": "Amount",      "width": { "mode": "fixed", "value": 30 } }
+    {
+      "key": "description",
+      "header": "Description",
+      "width": {
+        "mode": "auto"
+      }
+    },
+    {
+      "key": "qty",
+      "header": "Qty",
+      "width": {
+        "mode": "fixed",
+        "value": 18
+      }
+    },
+    {
+      "key": "unit_price",
+      "header": "Unit Price",
+      "width": {
+        "mode": "fixed",
+        "value": 30
+      }
+    },
+    {
+      "key": "amount",
+      "header": "Amount",
+      "width": {
+        "mode": "fixed",
+        "value": 30
+      }
+    }
   ],
   "rows": "{{#each items}}"
 }
@@ -142,8 +175,22 @@ Repeats a page per array element:
       "_each": "labels",
       "size": "label_100_150",
       "elements": [
-        { "type": "text", "x": 10, "y": 18, "content": "{{name}}" },
-        { "type": "text", "x": 10, "y": 28, "content": "{{address}}" }
+        {
+          "type": "text",
+          "layout": {
+            "left": 10,
+            "top": 18
+          },
+          "content": "{{name}}"
+        },
+        {
+          "type": "text",
+          "layout": {
+            "left": 10,
+            "top": 28
+          },
+          "content": "{{address}}"
+        }
       ]
     }
   ]
